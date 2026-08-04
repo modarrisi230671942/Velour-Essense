@@ -1,0 +1,1129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Velour Essence — Prototype</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --burgundy:#3D0C13;
+    --burgundy-dark:#2A080D;
+    --gold:#C5A059;
+    --gold-light:#E4CFA0;
+    --silk:#F4EAD8;
+    --cream:#FAF7F2;
+    --ink:#2A2018;
+    --gray:#7A7168;
+    --line:#E8E0D0;
+    --green:#1E8E3E;
+    --green-bg:#EAF6ED;
+    --green-text:#1E6B33;
+    --red-bg:#FBEAEA;
+    --red-text:#B3261E;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    font-family:'Plus Jakarta Sans',sans-serif;
+    background: linear-gradient(180deg,#E9E2D3, #DDD4C1);
+    min-height:100vh;
+    color:var(--ink);
+  }
+  .frame{
+    width:100%;
+    min-height:100vh;
+    background:var(--cream);
+  }
+  .promo{
+    background:var(--gold);
+    color:var(--burgundy);
+    font-size:13px;
+    font-weight:700;
+    text-align:center;
+    padding:9px 16px;
+    letter-spacing:0.2px;
+  }
+  .promo svg{vertical-align:-2px;margin-right:6px;}
+
+  header.nav{
+    background:#fff;
+    border-bottom:1px solid var(--line);
+    display:flex;
+    flex-wrap:wrap;
+    align-items:center;
+    gap:14px 24px;
+    padding:16px 32px;
+  }
+  .brandmark{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    flex-shrink:0;
+  }
+  .crest{
+    width:44px;height:44px;border-radius:50%;
+    border:2px solid var(--gold);
+    display:flex;align-items:center;justify-content:center;
+    color:var(--burgundy);
+    background:#fff;
+  }
+  .wordmark{
+    font-family:'Cinzel',serif;
+    font-weight:600;
+    font-size:17px;
+    line-height:1.15;
+    color:var(--burgundy);
+  }
+  .tagline{
+    font-size:9.5px;
+    letter-spacing:1px;
+    color:var(--gold);
+    font-weight:700;
+    text-transform:uppercase;
+    margin-top:2px;
+  }
+  .navwrap{
+    flex:1;
+    min-width:0;
+    display:flex;
+    align-items:center;
+    gap:8px;
+  }
+  .navscroll{
+    display:flex;
+    flex:1;
+    min-width:0;
+    gap:8px;
+    overflow-x:auto;
+    scrollbar-width:thin;
+    padding-bottom:4px;
+  }
+  .navscroll::-webkit-scrollbar{height:5px;}
+  .navscroll::-webkit-scrollbar-thumb{background:#c9bfa8;border-radius:10px;}
+  .pill{
+    flex-shrink:0;
+    border:1px solid var(--line);
+    background:#fff;
+    color:var(--ink);
+    font-size:12.5px;
+    font-weight:600;
+    padding:8px 14px;
+    border-radius:20px;
+    cursor:pointer;
+    white-space:nowrap;
+    display:flex;
+    align-items:center;
+    gap:6px;
+    transition:all .15s ease;
+  }
+  .pill:hover{border-color:var(--gold);}
+  .pill.active{
+    background:var(--burgundy);
+    color:#fff;
+    border-color:var(--burgundy);
+  }
+  .badge{
+    background:var(--gold);
+    color:var(--burgundy);
+    font-size:10.5px;
+    font-weight:800;
+    width:16px;height:16px;
+    border-radius:50%;
+    display:flex;align-items:center;justify-content:center;
+  }
+  .pill.active .badge{background:#fff;color:var(--burgundy);}
+  .navarrow{
+    background:none;border:none;color:var(--gray);cursor:pointer;font-size:16px;
+    flex-shrink:0;
+  }
+
+  main{
+    padding:36px 40px 60px;
+    min-height:520px;
+  }
+  main.anim{animation:screenIn .32s ease;}
+  @keyframes screenIn{
+    from{opacity:0;transform:translateY(6px);}
+    to{opacity:1;transform:translateY(0);}
+  }
+  @media (prefers-reduced-motion: reduce){
+    main{animation:none;}
+    .moodcard, .tiercard{transition:none;}
+  }
+  button:focus-visible, input:focus-visible, select:focus-visible, .pill:focus-visible, .quizopt:focus-visible{
+    outline:2px solid var(--gold);
+    outline-offset:2px;
+  }
+  .kicker{
+    display:inline-block;
+    background:var(--burgundy);
+    color:#fff;
+    font-size:11px;
+    font-weight:700;
+    letter-spacing:0.4px;
+    padding:6px 12px;
+    border-radius:20px;
+    margin-bottom:14px;
+  }
+  .eyebrow{
+    color:var(--gold);
+    font-size:12px;
+    font-weight:700;
+    letter-spacing:1px;
+    text-transform:uppercase;
+    margin-bottom:6px;
+  }
+  h1{
+    font-family:'Cinzel',serif;
+    color:var(--burgundy);
+    font-size:28px;
+    margin:0 0 8px;
+  }
+  .subtext{color:var(--gray);font-size:14.5px;margin:0 0 28px;max-width:640px;}
+
+  .grid{display:grid;gap:20px;}
+  .grid-3{grid-template-columns:repeat(3,1fr);}
+  .grid-2{grid-template-columns:repeat(2,1fr);}
+
+  .card{
+    background:#fff;
+    border:1px solid var(--line);
+    border-radius:14px;
+    padding:26px;
+    box-shadow:0 6px 20px rgba(61,12,19,0.05);
+  }
+  .card h3{
+    font-family:'Cinzel',serif;
+    color:var(--burgundy);
+    font-size:19px;
+    margin:0 0 10px;
+    text-align:center;
+  }
+  .tag{
+    display:inline-flex;align-items:center;gap:6px;
+    background:var(--silk);
+    color:var(--burgundy);
+    font-size:12.5px;
+    font-weight:600;
+    padding:5px 12px;
+    border-radius:20px;
+    margin:0 auto 14px;
+  }
+  .tagrow{text-align:center;}
+  .likebar{
+    background:#F1ECE2;
+    color:var(--gray);
+    font-style:italic;
+    font-size:13px;
+    text-align:center;
+    padding:8px;
+    border-radius:6px;
+    margin-bottom:14px;
+  }
+  .price{
+    font-family:'Cinzel',serif;
+    color:var(--burgundy);
+    font-weight:700;
+    font-size:24px;
+    text-align:center;
+    margin-bottom:16px;
+  }
+  .btn{
+    display:block;
+    width:100%;
+    background:var(--burgundy);
+    color:#fff;
+    border:none;
+    padding:13px;
+    border-radius:7px;
+    font-size:12.5px;
+    font-weight:700;
+    letter-spacing:0.6px;
+    text-transform:uppercase;
+    cursor:pointer;
+    text-align:center;
+    font-family:'Plus Jakarta Sans',sans-serif;
+    transition:background .15s;
+  }
+  .btn:hover{background:var(--burgundy-dark);}
+  .btn.green{background:var(--green);}
+  .btn.green:hover{background:#166b2f;}
+  .btn.ghost{background:transparent;color:var(--burgundy);border:1px solid var(--burgundy);}
+
+  .voucherbar{
+    background:var(--silk);
+    color:var(--burgundy);
+    font-size:12.5px;
+    font-weight:600;
+    padding:9px 12px;
+    border-radius:6px;
+    margin-bottom:16px;
+  }
+  .kitprice{
+    font-family:'Cinzel',serif;
+    color:var(--burgundy);
+    font-weight:700;
+    font-size:22px;
+    margin-bottom:14px;
+  }
+
+  /* Personalize */
+  .split{display:grid;grid-template-columns:1fr 1fr;gap:28px;align-items:start;}
+  label.field-label{
+    display:block;font-size:11px;font-weight:700;letter-spacing:0.6px;
+    text-transform:uppercase;color:var(--gray);margin-bottom:8px;
+  }
+  .field{margin-bottom:22px;}
+  .fielderror{color:var(--red-text);font-size:12px;font-weight:600;margin-top:6px;}
+  input[type=text]{
+    width:100%;
+    padding:12px 14px;
+    border:1px solid var(--line);
+    border-radius:7px;
+    font-size:14px;
+    font-family:'Plus Jakarta Sans',sans-serif;
+    color:var(--ink);
+    background:#fff;
+  }
+  input[type=text]:focus{outline:2px solid var(--gold);border-color:var(--gold);}
+  .preview-wrap{
+    background:#F1ECE2;
+    border:1px solid var(--line);
+    border-radius:14px;
+    padding:40px;
+    display:flex;
+    justify-content:center;
+  }
+  .bottlecap{
+    width:34px;height:20px;background:var(--gold);
+    border-radius:4px 4px 2px 2px;
+    margin:0 auto -1px;
+  }
+  .label{
+    width:220px;
+    border:2px solid var(--gold);
+    border-radius:8px;
+    background:var(--cream);
+    padding:26px 16px;
+    text-align:center;
+  }
+  .label .lv{font-family:'Cinzel',serif;font-size:9px;letter-spacing:2px;color:var(--gray);margin-bottom:14px;}
+  .label .lt{font-family:'Cinzel',serif;font-weight:700;font-size:15px;color:var(--burgundy);margin-bottom:6px;word-break:break-word;}
+  .label .ls{font-size:8.5px;letter-spacing:1px;color:var(--gray);text-transform:uppercase;}
+
+  /* cart / checkout */
+  .cartlist{display:flex;flex-direction:column;gap:14px;}
+  .cartitem{
+    display:flex;align-items:center;gap:16px;
+    background:#fff;border:1px solid var(--line);border-radius:12px;padding:18px;
+  }
+  .cicon{
+    width:38px;height:38px;border-radius:50%;border:1px solid var(--line);
+    display:flex;align-items:center;justify-content:center;flex-shrink:0;color:var(--burgundy);
+  }
+  .cititle{font-weight:700;font-size:14.5px;}
+  .cisub{font-size:12px;color:var(--gold);font-weight:600;margin-top:2px;}
+  .ciprice{margin-left:auto;font-family:'Cinzel',serif;font-weight:700;color:var(--burgundy);font-size:16px;flex-shrink:0;text-align:right;}
+  .ciunit{font-family:'Plus Jakarta Sans',sans-serif;font-weight:600;font-size:11px;color:var(--gray);margin-top:2px;}
+  .qtystepper{display:flex;align-items:center;gap:10px;margin-top:8px;}
+  .qtybtn{
+    width:24px;height:24px;border-radius:50%;border:1px solid var(--line);background:#fff;
+    color:var(--burgundy);font-size:15px;font-weight:700;line-height:1;cursor:pointer;
+    display:flex;align-items:center;justify-content:center;transition:all .15s;
+  }
+  .qtybtn:hover{border-color:var(--gold);background:var(--silk);}
+  .qtyval{font-size:13px;font-weight:700;min-width:16px;text-align:center;}
+  .removebtn{
+    flex-shrink:0;width:30px;height:30px;border-radius:50%;
+    background:transparent;border:1px solid var(--line);color:var(--gray);
+    display:flex;align-items:center;justify-content:center;cursor:pointer;
+    margin-left:10px;transition:all .15s;
+  }
+  .removebtn:hover{background:var(--red-bg);border-color:var(--red-text);color:var(--red-text);}
+  .btn:disabled{background:var(--line);color:var(--gray);cursor:not-allowed;}
+  .btn:disabled:hover{background:var(--line);}
+  .summarycard{background:#fff;border:1px solid var(--line);border-radius:12px;padding:22px;height:fit-content;}
+  .summarylabel{color:var(--gold);font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:14px;}
+  .totalrow{display:flex;justify-content:space-between;font-weight:700;font-size:15px;margin-bottom:20px;padding-bottom:16px;border-bottom:1px solid var(--line);}
+
+  .radio-row{
+    display:flex;align-items:center;gap:12px;
+    border:1px solid var(--line);border-radius:8px;
+    padding:14px 16px;margin-bottom:10px;cursor:pointer;
+    font-size:14px;font-weight:600;
+    transition:all .15s;
+  }
+  .radio-row.selected{border-color:var(--burgundy);background:var(--silk);}
+  .radiodot{width:18px;height:18px;border-radius:50%;border:2px solid var(--gray);flex-shrink:0;position:relative;}
+  .radio-row.selected .radiodot{border-color:var(--burgundy);}
+  .radio-row.selected .radiodot::after{
+    content:'';position:absolute;inset:3px;border-radius:50%;background:var(--burgundy);
+  }
+
+  /* brand pages */
+  .infocard h4{
+    font-size:11px;letter-spacing:0.6px;text-transform:uppercase;color:var(--gold);
+    margin:0 0 8px;font-weight:700;
+  }
+  .infocard strong{display:block;font-size:15px;margin-bottom:6px;color:var(--ink);}
+  .infocard p, .infocard li{font-size:13.5px;color:var(--gray);line-height:1.6;}
+  .infocard ul{margin:0;padding-left:18px;}
+  .divider{border:none;border-top:1px solid var(--gold-light);margin:28px 0 20px;}
+  h2.section{
+    font-family:'Cinzel',serif;color:var(--burgundy);font-size:16px;margin:0 0 4px;
+    display:flex;align-items:center;gap:9px;
+  }
+  h2.section::before{
+    content:'';width:7px;height:7px;background:var(--gold);
+    transform:rotate(45deg);flex-shrink:0;
+  }
+
+  .crestcard{text-align:center;padding:30px 20px;}
+  .crestcard.dark{background:var(--burgundy);color:#fff;}
+  .crestcard.dark .crestcircle{border-color:var(--gold);}
+  .crestcircle{
+    width:52px;height:52px;border-radius:50%;border:2px solid var(--burgundy);
+    display:flex;align-items:center;justify-content:center;margin:0 auto 12px;
+    font-family:'Cinzel',serif;font-weight:700;color:inherit;
+  }
+  .crestlabel{font-weight:700;font-size:14px;margin-bottom:4px;}
+  .crestsub{font-size:12px;color:var(--gray);}
+  .crestcard.dark .crestsub{color:#E4CFA0;}
+  .prohibited{background:var(--red-bg);text-align:left;padding:22px;}
+  .prohibited h4{color:var(--red-text);font-weight:700;font-size:13.5px;margin:0 0 8px;}
+  .prohibited ul{margin:0;padding-left:16px;color:var(--red-text);font-size:12.5px;line-height:1.7;}
+
+  .swatch{border-radius:12px;overflow:hidden;border:1px solid var(--line);}
+  .swatchblock{height:80px;display:flex;align-items:flex-end;padding:10px;}
+  .hexchip{background:rgba(0,0,0,0.15);color:#fff;font-size:11px;font-weight:700;padding:3px 8px;border-radius:5px;}
+  .swatchmeta{background:#fff;padding:14px 16px;}
+  .swatchname{font-weight:700;font-size:14px;}
+  .swatchuse{font-size:12px;color:var(--gray);}
+
+  .typecard{padding:24px;}
+  .typelabel{font-size:11px;letter-spacing:0.6px;text-transform:uppercase;color:var(--gold);font-weight:700;margin-bottom:10px;}
+  .typesample{font-size:20px;color:var(--burgundy);margin-bottom:8px;}
+  .typesample.cinzel{font-family:'Cinzel',serif;font-weight:700;}
+  .typesample.jakarta{font-family:'Plus Jakarta Sans',sans-serif;font-weight:700;color:var(--ink);}
+  .typedesc{font-size:12.5px;color:var(--gray);}
+
+  .tonecard{padding:20px;font-size:14px;border-radius:10px;font-style:italic;font-weight:600;}
+  .tonecard.good{background:var(--green-bg);color:var(--green-text);}
+  .tonecard.bad{background:var(--red-bg);color:var(--red-text);}
+  .tonecard b{font-style:normal;margin-right:6px;}
+
+  .imglist{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:12px;}
+  .imglist li{font-size:14px;color:var(--ink);}
+  .imglist b{color:var(--burgundy);}
+
+  .placeholder{
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    padding:80px 20px;border:1px dashed var(--gold-light);border-radius:14px;
+    color:var(--gray);text-align:center;gap:10px;
+  }
+  .placeholder h3{font-family:'Cinzel',serif;color:var(--burgundy);font-size:20px;margin:0;}
+
+  .toast{
+    position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(20px);
+    background:var(--burgundy);color:#fff;padding:12px 22px;border-radius:30px;
+    font-size:13.5px;font-weight:600;box-shadow:0 10px 30px rgba(0,0,0,0.25);
+    opacity:0;pointer-events:none;transition:all .25s ease;z-index:999;
+  }
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+  /* Sensory guarantee + tier pricing (Home) */
+  .guarantee-card{
+    background:#fff;border:1px solid var(--gold);border-left:4px solid var(--gold);
+    border-radius:8px;padding:16px 18px;margin-bottom:24px;
+    display:flex;gap:14px;align-items:flex-start;
+  }
+  .guarantee-card svg{flex-shrink:0;margin-top:2px;}
+  .guarantee-card div{font-size:13.5px;line-height:1.55;color:var(--ink);}
+  .tiergrid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:28px;}
+  .tiercard{
+    background:#fff;border:1px solid var(--line);border-radius:12px;
+    padding:20px;text-align:center;cursor:pointer;transition:all .15s;
+  }
+  .tiercard:hover{transform:translateY(-2px);}
+  .tiercard.featured{border:1.5px solid var(--gold);}
+  .tiername{font-weight:700;color:var(--burgundy);font-size:13.5px;margin-bottom:6px;}
+  .tierprice{font-family:'Cinzel',serif;color:var(--burgundy);font-weight:700;font-size:20px;}
+  .tiersub{font-size:11.5px;color:var(--gold);font-weight:600;margin-top:4px;}
+
+  /* Studio sliders */
+  .studiogrid2{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
+  .slidergroup{margin-bottom:18px;}
+  .sliderlabel{display:flex;justify-content:space-between;font-size:13px;font-weight:600;margin-bottom:6px;}
+  .sliderlabel span:last-child{color:var(--burgundy);font-family:'Cinzel',serif;}
+  input[type=range]{
+    width:100%;accent-color:var(--burgundy);
+  }
+  select.input-select{
+    width:100%;padding:12px 14px;border:1px solid var(--line);border-radius:7px;
+    font-size:13.5px;font-family:'Plus Jakarta Sans',sans-serif;background:#fff;color:var(--ink);margin-top:6px;
+  }
+  .formulabox{
+    display:flex;flex-direction:column;justify-content:space-between;height:100%;
+  }
+
+  .hero{
+    display:grid;grid-template-columns:1.1fr 0.9fr;gap:36px;align-items:center;
+    margin-bottom:44px;
+  }
+  .hero h1{font-size:34px;margin-bottom:14px;line-height:1.15;}
+  .hero p.subtext{font-size:15.5px;margin-bottom:26px;}
+  .herobtns{display:flex;gap:12px;}
+  .herobtns .btn{width:auto;padding:13px 22px;}
+  .heroart{
+    border-radius:16px;overflow:hidden;
+    display:flex;align-items:center;justify-content:center;
+  }
+  .heroart svg{width:100%;height:auto;display:block;}
+  .moodgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-bottom:8px;}
+  .moodcard{
+    background:#fff;border:1px solid var(--line);border-radius:12px;padding:20px;
+    cursor:pointer;transition:all .15s;text-align:center;
+  }
+  .moodcard:hover{border-color:var(--gold);transform:translateY(-2px);}
+  .moodcard .micon{font-size:26px;margin-bottom:8px;}
+  .moodcard b{display:block;font-size:14.5px;color:var(--burgundy);margin-bottom:4px;font-family:'Cinzel',serif;}
+  .moodcard span{font-size:12px;color:var(--gray);}
+
+  /* Studio */
+  .studiogrid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-bottom:24px;}
+  .notecol h4{
+    font-size:11px;font-weight:700;letter-spacing:0.8px;text-transform:uppercase;
+    color:var(--gold);margin-bottom:12px;
+  }
+  .chip{
+    display:flex;align-items:center;justify-content:space-between;
+    background:#fff;border:1px solid var(--line);border-radius:8px;
+    padding:12px 14px;margin-bottom:8px;cursor:pointer;font-size:13.5px;font-weight:600;
+    transition:all .15s;
+  }
+  .chip:hover{border-color:var(--gold-light);}
+  .chip.selected{background:var(--burgundy);color:#fff;border-color:var(--burgundy);}
+  .chip .check{opacity:0;}
+  .chip.selected .check{opacity:1;}
+  .blendpanel{
+    background:#fff;border:1px solid var(--line);border-radius:14px;padding:28px;
+    text-align:center;
+  }
+  .blendname{font-family:'Cinzel',serif;font-size:22px;color:var(--burgundy);font-weight:700;margin-bottom:6px;}
+  .blenddesc{font-size:13.5px;color:var(--gray);margin-bottom:20px;}
+  .blendnotes{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-bottom:22px;}
+  .blendnotes span{
+    background:var(--silk);color:var(--burgundy);font-size:12px;font-weight:600;
+    padding:6px 12px;border-radius:20px;
+  }
+
+  /* Matcher / Quiz */
+  .quizwrap{max-width:640px;}
+  .quizprogress{display:flex;gap:6px;margin-bottom:24px;}
+  .quizprogress .seg{flex:1;height:4px;border-radius:4px;background:var(--line);}
+  .quizprogress .seg.done{background:var(--gold);}
+  .quizq{font-family:'Cinzel',serif;font-size:19px;color:var(--burgundy);margin-bottom:18px;}
+  .quizopt{
+    display:block;width:100%;text-align:left;background:#fff;border:1px solid var(--line);
+    border-radius:10px;padding:16px 18px;margin-bottom:12px;font-size:14.5px;font-weight:600;
+    cursor:pointer;transition:all .15s;font-family:'Plus Jakarta Sans',sans-serif;color:var(--ink);
+  }
+  .quizopt:hover{border-color:var(--gold);background:var(--silk);}
+  .resultcard{
+    background:#fff;border:1px solid var(--line);border-radius:14px;padding:32px;text-align:center;
+  }
+  .resultcard .rlabel{color:var(--gold);font-size:12px;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;}
+  .resultcard h3{font-family:'Cinzel',serif;color:var(--burgundy);font-size:26px;margin:0 0 10px;}
+  .resultcard p{color:var(--gray);font-size:14.5px;margin-bottom:22px;}
+  .resultbtns{display:flex;gap:12px;justify-content:center;}
+  .resultbtns .btn{width:auto;padding:13px 22px;}
+
+  @media (max-width: 860px){
+    .hero, .studiogrid, .moodgrid{grid-template-columns:1fr;}
+    .split, .grid-2, .grid-3{grid-template-columns:1fr;}
+    header.nav{padding:14px 18px;}
+    main{padding:24px 18px 50px;}
+  }
+
+  @media (max-width: 640px){
+    header.nav{
+      padding:12px 16px;
+      gap:10px;
+    }
+    .navwrap{
+      flex:1 1 100%;
+      order:3;
+      width:100%;
+    }
+    .tagline{display:none;}
+    .wordmark{font-size:15px;}
+    .crest{width:36px;height:36px;}
+    main{padding:20px 16px 44px;}
+  }
+</style>
+</head>
+<body>
+
+<div class="frame">
+  <div class="promo">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#3D0C13" stroke-width="2"><path d="M12 2l8 4v6c0 5-3.5 8.5-8 10-4.5-1.5-8-5-8-10V6l8-4z"/></svg>
+    RISK-FREE GUARANTEE: Every bottle includes a free 2ml sample. Test it first—return unopened for a 100% refund!
+  </div>
+
+  <header class="nav">
+    <div class="brandmark">
+      <div class="crest">
+        <svg width="26" height="26" viewBox="0 0 100 100" fill="none">
+          <circle cx="50" cy="50" r="46" stroke="#C5A059" stroke-width="2.5"/>
+          <circle cx="50" cy="50" r="40" stroke="#3D0C13" stroke-width="1"/>
+          <path d="M34 34L40 41L50 29L60 41L66 34L69 46H31L34 34Z" fill="#C5A059" stroke="#3D0C13" stroke-width="0.6"/>
+          <path d="M32 50H44L50 66L56 50H68L54 74H46L32 50Z" fill="#3D0C13"/>
+        </svg>
+      </div>
+      <div>
+        <div class="wordmark">VELOUR<br>ESSENCE</div>
+        <div class="tagline">Affordable Luxury Perfumery</div>
+      </div>
+    </div>
+    <div class="navwrap">
+      <button class="navarrow" onclick="scrollNav(-1)">&#8249;</button>
+      <div class="navscroll" id="navscroll"></div>
+      <button class="navarrow" onclick="scrollNav(1)">&#8250;</button>
+    </div>
+  </header>
+
+  <main id="main"></main>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ---------- Nav config ---------- */
+const NAV = [
+  {id:'home', label:'1: Home'},
+  {id:'studio', label:'2: Studio'},
+  {id:'personalize', label:'3: Personalize'},
+  {id:'matcher', label:'4: Matcher'},
+  {id:'house', label:'5: House'},
+  {id:'discovery', label:'6: Discovery'},
+  {id:'cart', label:'7: Cart', cart:true},
+  {id:'checkout', label:'8: Checkout'},
+];
+
+let state = {
+  screen: 'house',
+  cart: [],
+  fragranceTitle: 'ANAS SIGNATURE',
+  fragranceSub: 'LIMITED EDITION • 2026',
+  payment: 'payfast',
+  studio: {top:30, heart:40, base:30, size:'50ml', price:400},
+  quizStep: 0,
+  quizAnswers: {},
+  checkout: {name:'', address:''},
+};
+
+const SIZE_PRICES = {'30ml':300, '50ml':400, '100ml':500};
+
+const QUIZ = [
+  {
+    q:"What's the vibe you're chasing?",
+    key:'mood',
+    options:['Bold & mysterious','Bright & uplifting','Warm & romantic','Fresh & clean'],
+  },
+  {
+    q:'When do you wear fragrance most?',
+    key:'time',
+    options:['Evenings out','Daytime / work','Weekends','Special occasions'],
+  },
+  {
+    q:'Pick a reference scent you already love:',
+    key:'ref',
+    options:['Tom Ford Oud Wood','Maison Francis Kurkdjian Baccarat Rouge','Creed Aventus','Chanel Chance Eau Fraîche'],
+  },
+];
+
+const MATCH_RESULTS = {
+  'Tom Ford Oud Wood': {name:'Velour Noir', tag:'Late Night • Espresso', key:'noir'},
+  'Maison Francis Kurkdjian Baccarat Rouge': {name:'Golden Aura', tag:'Sunset • Champagne', key:'aura'},
+  'Creed Aventus': {name:'Golden Aura', tag:'Sunset • Champagne', key:'aura'},
+  'Chanel Chance Eau Fraîche': {name:'Citrus Bloom', tag:'Morning • Coastal', key:'bloom'},
+};
+
+function cartCount(){ return state.cart.reduce((s,i)=>s+i.qty,0); }
+function cartTotal(){ return state.cart.reduce((s,i)=>s+i.price*i.qty,0); }
+
+function renderNav(){
+  const wrap = document.getElementById('navscroll');
+  wrap.innerHTML = '';
+  NAV.forEach(item=>{
+    const pill = document.createElement('button');
+    pill.className = 'pill' + (state.screen===item.id?' active':'');
+    let inner = item.label;
+    if(item.cart){
+      inner += ` <span class="badge">${cartCount()}</span>`;
+    }
+    pill.innerHTML = inner;
+    pill.onclick = ()=>go(item.id);
+    wrap.appendChild(pill);
+  });
+}
+
+function scrollNav(dir){
+  document.getElementById('navscroll').scrollBy({left: dir*220, behavior:'smooth'});
+}
+
+function toast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(window._toastTimer);
+  window._toastTimer = setTimeout(()=>t.classList.remove('show'), 1800);
+}
+
+function go(id){
+  state.screen = id;
+  renderNav();
+  renderScreen();
+  document.getElementById('main').scrollIntoView({behavior:'smooth', block:'start'});
+}
+
+function addToCart(item){
+  const existing = state.cart.find(i=>i.key===item.key && i.title===item.title && i.price===item.price);
+  if(existing){
+    existing.qty += 1;
+    toast(`Added another "${item.title}" (now ${existing.qty} in cart)`);
+  } else {
+    state.cart.push({...item, qty:1});
+    toast(`Added "${item.title}" to cart`);
+  }
+  renderNav();
+  renderScreen();
+}
+
+function removeFromCart(idx){
+  const removed = state.cart[idx];
+  state.cart.splice(idx,1);
+  renderNav();
+  toast(`Removed "${removed.title}" from cart`);
+  renderScreen();
+}
+
+function updateQty(idx, delta){
+  const item = state.cart[idx];
+  if(!item) return;
+  item.qty += delta;
+  if(item.qty <= 0){
+    removeFromCart(idx);
+    return;
+  }
+  renderNav();
+  renderScreen();
+}
+
+/* ---------- Screen templates ---------- */
+function screenHeader(kicker, eyebrow, title, sub){
+  return `
+    <span class="kicker">${kicker}</span>
+    <div class="eyebrow">${eyebrow}</div>
+    <h1>${title}</h1>
+    <p class="subtext">${sub}</p>
+  `;
+}
+
+function placeholder(name, note){
+  return `<div class="placeholder">
+    <h3>${name}</h3>
+    <p style="max-width:420px;margin:0;font-size:13.5px;">${note}</p>
+  </div>`;
+}
+
+function productCard(title, tag, tagIcon, likeText, price, key){
+  return `
+  <div class="card">
+    <h3>${title}</h3>
+    <div class="tagrow"><span class="tag">${tagIcon} ${tag}</span></div>
+    <div class="likebar">If you like: ${likeText}</div>
+    <div class="price">R${price}</div>
+    <button class="btn" onclick="addToCart({key:'${key}', title:'${title}', sub:'+ Includes Free 2ml Mini Sample', price:${price}})">Add to Cart</button>
+  </div>`;
+}
+
+function kitCard(title, price, voucher, cta, key){
+  return `
+  <div class="card">
+    <h3 style="text-align:left;">${title}</h3>
+    <div class="kitprice" style="text-align:left;">R${price.toFixed(2)}</div>
+    <div class="voucherbar">Includes R${price} voucher inside! (Kit becomes FREE)</div>
+    <button class="btn" onclick="addToCart({key:'${key}', title:'${title}', sub:'+ R${price} Voucher Included', price:${price}})">${cta}</button>
+  </div>`;
+}
+
+function renderScreen(){
+  const main = document.getElementById('main');
+  let html = '';
+
+  if(state.screen==='home'){
+    html = `
+      <span class="kicker">HOME</span>
+      <div class="hero">
+        <div>
+          <div class="eyebrow">Welcome to Velour Essence</div>
+          <h1>Luxury fragrance, without the retail markup.</h1>
+          <p class="subtext">Master-blended perfumes inspired by the scents you already love. Every bottle ships with a free 2ml sample and a risk-free 100% refund guarantee.</p>
+          <div class="herobtns">
+            <button class="btn" onclick="go('house')">Shop the Collection</button>
+            <button class="btn ghost" onclick="go('matcher')">Find My Scent Match</button>
+          </div>
+        </div>
+        <div class="heroart">
+          <svg viewBox="0 0 300 260" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <radialGradient id="stageGrad" cx="50%" cy="60%" r="75%">
+                <stop offset="0%" stop-color="#F4EAD8"/>
+                <stop offset="100%" stop-color="#DCCFB6"/>
+              </radialGradient>
+              <linearGradient id="liquidGrad" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#C5A059"/>
+                <stop offset="100%" stop-color="#3D0C13"/>
+              </linearGradient>
+            </defs>
+            <rect width="300" height="260" rx="16" fill="url(#stageGrad)"/>
+            <path d="M46 205Q58 150 42 118" stroke="#9C8656" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+            <circle cx="42" cy="118" r="5" fill="#C5A059"/>
+            <circle cx="52" cy="132" r="3.5" fill="#C5A059" opacity="0.7"/>
+            <ellipse cx="152" cy="216" rx="72" ry="11" fill="rgba(61,12,19,0.14)"/>
+            <rect x="112" y="90" width="80" height="120" rx="14" fill="url(#liquidGrad)" stroke="#3D0C13" stroke-width="1.5"/>
+            <rect x="124" y="100" width="9" height="100" rx="4.5" fill="rgba(255,255,255,0.22)"/>
+            <rect x="142" y="70" width="20" height="24" fill="url(#liquidGrad)" stroke="#3D0C13" stroke-width="1.2"/>
+            <rect x="134" y="52" width="36" height="22" rx="4" fill="#C5A059" stroke="#3D0C13" stroke-width="1.2"/>
+            <rect x="124" y="128" width="56" height="42" rx="3" fill="#FAF7F2" stroke="#C5A059" stroke-width="1"/>
+            <text x="152" y="146" text-anchor="middle" font-family="Cinzel, serif" font-size="6.5" fill="#3D0C13" letter-spacing="1.5">VELOUR</text>
+            <text x="152" y="157" text-anchor="middle" font-family="Cinzel, serif" font-size="6.5" fill="#3D0C13" letter-spacing="1.5">ESSENCE</text>
+          </svg>
+        </div>
+      </div>
+
+      <div class="guarantee-card">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#3D0C13" stroke-width="1.8"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+        <div>
+          <strong>Unsure how it smells online? We've got you covered:</strong><br>
+          1. Start with a Discovery Kit (R180) &amp; get 100% back as a voucher.<br>
+          2. Or order a full bottle &amp; test the included 2ml mini sample first!
+        </div>
+      </div>
+
+      <div class="eyebrow">Choose a size</div>
+      <div class="tiergrid">
+        ${tierCard('30ml','Pocket Luxury',300)}
+        ${tierCard('50ml','Flagship Bottle',400,true)}
+        ${tierCard('100ml','Statement',500)}
+      </div>
+
+      <div class="eyebrow">Shop by mood</div>
+      <h1 style="font-size:22px;margin-bottom:18px;">Where do you want to start?</h1>
+      <div class="moodgrid">
+        <div class="moodcard" onclick="go('house')">
+          <div class="micon">🌙</div>
+          <b>The House Collection</b>
+          <span>Ready-to-wear signature scents</span>
+        </div>
+        <div class="moodcard" onclick="go('studio')">
+          <div class="micon">🧪</div>
+          <b>The Studio</b>
+          <span>Blend top, heart & base oils online</span>
+        </div>
+        <div class="moodcard" onclick="go('discovery')">
+          <div class="micon">📦</div>
+          <b>Discovery Kits</b>
+          <span>Sample first, refunded as a voucher</span>
+        </div>
+      </div>`;
+  }
+  else if(state.screen==='studio'){
+    const s = state.studio;
+    html = screenHeader('CUSTOM BUILDER', 'Interactive Formulation', 'Digital Scent Studio', 'Adjust fragrance oil ratios below. Notes are mapped visually to sensory emotions.')
+      + `<div class="studiogrid2">
+          <div class="card">
+            <div class="eyebrow" style="margin-bottom:14px;">Step 1: Balance Raw Oils</div>
+            <div class="slidergroup">
+              <div class="sliderlabel"><span>Cape Citrus (Top)</span><span id="topVal">${s.top}%</span></div>
+              <input type="range" min="10" max="60" value="${s.top}" oninput="updateSlider('top', this.value)">
+            </div>
+            <div class="slidergroup">
+              <div class="sliderlabel"><span>Midnight Jasmine (Heart)</span><span id="heartVal">${s.heart}%</span></div>
+              <input type="range" min="10" max="60" value="${s.heart}" oninput="updateSlider('heart', this.value)">
+            </div>
+            <div class="slidergroup">
+              <div class="sliderlabel"><span>Amber &amp; Cedar (Base)</span><span id="baseVal">${s.base}%</span></div>
+              <input type="range" min="10" max="60" value="${s.base}" oninput="updateSlider('base', this.value)">
+            </div>
+            <div style="margin-top:20px;">
+              <label class="field-label">Step 2: Choose Size</label>
+              <select class="input-select" onchange="updateSize(this.value)">
+                <option value="30ml" ${s.size==='30ml'?'selected':''}>30ml Eau de Parfum — R300</option>
+                <option value="50ml" ${s.size==='50ml'?'selected':''}>50ml Eau de Parfum — R400</option>
+                <option value="100ml" ${s.size==='100ml'?'selected':''}>100ml Eau de Parfum — R500</option>
+              </select>
+            </div>
+          </div>
+          <div class="card formulabox">
+            <div>
+              <div class="eyebrow" style="margin-bottom:10px;">Formula Breakdown</div>
+              <div class="tag">${formulaMood(s)}</div>
+              <div class="price" style="margin-top:10px;">R${s.price}.00</div>
+            </div>
+            <button class="btn" onclick="go('personalize')">Next: Personalize Label &rarr;</button>
+          </div>
+        </div>`;
+  }
+  else if(state.screen==='personalize'){
+    html = screenHeader('LABEL CUSTOMIZATION', 'Real-Time Printing Mirror', 'Personalize Your Bottle', 'Type below to see your custom name updated live on the luxury label preview.')
+      + `<div class="split">
+          <div>
+            <div class="field">
+              <label class="field-label">Fragrance Title</label>
+              <input type="text" id="fragTitle" value="${state.fragranceTitle}" oninput="updateLabel(this.value,'title')">
+            </div>
+            <div class="field">
+              <label class="field-label">Subtitle / Year</label>
+              <input type="text" id="fragSub" value="${state.fragranceSub}" oninput="updateLabel(this.value,'sub')">
+            </div>
+          </div>
+          <div>
+            <div class="preview-wrap">
+              <div>
+                <div class="bottlecap"></div>
+                <div class="label">
+                  <div class="lv">VELOUR ESSENCE</div>
+                  <div class="lt" id="labelTitle">${state.fragranceTitle}</div>
+                  <div class="ls" id="labelSub">${state.fragranceSub}</div>
+                </div>
+              </div>
+            </div>
+            <div style="height:16px;"></div>
+            <button class="btn" onclick="addToCart({key:'custom', title:'Custom: '+document.getElementById('fragTitle').value, sub:'+ Includes Free 2ml Mini Sample', price:state.studio.price})">Add to Cart — R${state.studio.price}</button>
+          </div>
+        </div>`;
+  }
+  else if(state.screen==='matcher'){
+    html = screenHeader('SCENT MATCHER', 'Find Your Match', 'The Scent Matcher', "Answer a few quick questions and we'll recommend a Velour Essence dupe for your favorite designer scent.")
+      + renderQuiz();
+  }
+  else if(state.screen==='house'){
+    html = screenHeader('HOUSE COLLECTION', 'Visualized Scent Profiles', 'The Signature Collection', 'Master-blended perfumes mapped to luxury scent families.')
+      + `<div class="grid grid-3">
+          ${productCard('Velour Noir','Late Night • Espresso','🌙','Oud Wood',400,'noir')}
+          ${productCard('Golden Aura','Sunset • Champagne','✨','Baccarat Rouge',400,'aura')}
+          ${productCard('Citrus Bloom','Morning • Coastal','☀️','Neroli Portofino',400,'bloom')}
+        </div>`;
+  }
+  else if(state.screen==='discovery'){
+    html = screenHeader('DISCOVERY KITS', 'Risk-Free Online Buying', 'Discovery &amp; Sample Kits', 'Try fragrances on skin at home first. Includes 100% money-back voucher code!')
+      + `<div class="grid grid-2">
+          ${kitCard('Signature Discovery Trio',180,180,'Order Trio','trio2')}
+          ${kitCard('Custom Note Tester Box',220,220,'Build Box','testerbox')}
+        </div>`;
+  }
+  else if(state.screen==='cart'){
+    const items = state.cart.map((i,idx)=>`
+      <div class="cartitem">
+        <div class="cicon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 7h12l-1 13H7L6 7z"/><path d="M9 7V5a3 3 0 0 1 6 0v2"/></svg>
+        </div>
+        <div>
+          <div class="cititle">${i.title}</div>
+          <div class="cisub">${i.sub}</div>
+          <div class="qtystepper">
+            <button class="qtybtn" onclick="updateQty(${idx},-1)" aria-label="Decrease quantity of ${i.title.replace(/"/g,'&quot;')}">&minus;</button>
+            <span class="qtyval">${i.qty}</span>
+            <button class="qtybtn" onclick="updateQty(${idx},1)" aria-label="Increase quantity of ${i.title.replace(/"/g,'&quot;')}">&plus;</button>
+          </div>
+        </div>
+        <div class="ciprice">R${(i.price*i.qty).toFixed(2)}${i.qty>1?`<div class="ciunit">R${i.price} each</div>`:''}</div>
+        <button class="removebtn" onclick="removeFromCart(${idx})" aria-label="Remove ${i.title.replace(/"/g,'&quot;')} from cart" title="Remove">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+        </button>
+      </div>`).join('');
+    html = screenHeader('SHOPPING CART', 'Order Overview', 'Your Fragrance Bag', 'Review items and risk-free sample guarantees.')
+      + `<div class="split" style="grid-template-columns:1.6fr 1fr;">
+          <div class="cartlist">${items || '<div class="placeholder"><h3>Your bag is empty</h3><p style="margin:0 0 16px;">Add something from the House Collection or a Discovery Kit.</p><button class="btn" style="width:auto;padding:12px 22px;" onclick="go(\'house\')">Browse the Collection</button></div>'}</div>
+          <div class="summarycard">
+            <div class="summarylabel">Summary</div>
+            <div class="totalrow" style="border-bottom:none;padding-bottom:0;margin-bottom:6px;font-weight:600;font-size:13px;color:var(--gray);"><span>Items</span><span>${cartCount()}</span></div>
+            <div class="totalrow"><span>Total</span><span>R${cartTotal().toFixed(2)}</span></div>
+            <button class="btn" ${state.cart.length===0?'disabled':''} onclick="go('checkout')">Proceed to Checkout &rarr;</button>
+          </div>
+        </div>`;
+  }
+  else if(state.screen==='checkout'){
+    const c = state.checkout;
+    const canPay = state.cart.length>0 && c.name.trim().length>1 && c.address.trim().length>4;
+    html = screenHeader('CHECKOUT', 'Localized Payment Options', 'Express Checkout', 'Complete address and select payment gateway.')
+      + `<div class="split">
+          <div class="card">
+            <div class="field">
+              <label class="field-label">Full Name</label>
+              <input type="text" id="checkoutName" value="${c.name}" placeholder="e.g. Anas M" oninput="updateCheckout(this.value,'name')">
+            </div>
+            <div class="field">
+              <label class="field-label">Delivery Address</label>
+              <input type="text" id="checkoutAddress" value="${c.address}" placeholder="Street, City" oninput="updateCheckout(this.value,'address')">
+              ${!canPay && state.cart.length>0 ? '<div class="fielderror">Please enter your full name and delivery address to continue.</div>':''}
+            </div>
+          </div>
+          <div class="card">
+            <div class="summarylabel" style="margin-bottom:16px;">Payment Gateway</div>
+            ${paymentRow('payfast','PayFast / Ozow Instant EFT')}
+            ${paymentRow('card','Credit / Debit Card')}
+            ${paymentRow('payflex','PayFlex (4× Interest-Free)')}
+            <div style="height:8px;"></div>
+            ${state.cart.length===0 ? '<div class="voucherbar" style="text-align:center;">Your bag is empty — add something before checking out.</div>' : ''}
+            <button class="btn green" ${canPay?'':'disabled'} onclick="submitPayment()">Pay R${cartTotal().toFixed(2)}</button>
+          </div>
+        </div>`;
+  }
+
+  main.innerHTML = html;
+  main.classList.remove('anim');
+  void main.offsetWidth;
+  main.classList.add('anim');
+}
+
+/* ---------- Home helpers ---------- */
+function tierCard(size, name, price, featured){
+  return `<div class="tiercard ${featured?'featured':''}" onclick="selectTier('${size}')">
+    <div class="tiername">${size} ${name}</div>
+    <div class="tierprice">R${price}</div>
+    <div class="tiersub">+ Free 2ml Sample</div>
+  </div>`;
+}
+function selectTier(size){
+  state.studio.size = size;
+  state.studio.price = SIZE_PRICES[size];
+  go('studio');
+}
+
+/* ---------- Studio helpers ---------- */
+function updateSlider(which, val){
+  state.studio[which] = parseInt(val,10);
+  document.getElementById(which+'Val').textContent = val+'%';
+  const tagEl = document.querySelector('#main .tag');
+  if(tagEl) tagEl.textContent = formulaMood(state.studio);
+}
+function updateSize(size){
+  state.studio.size = size;
+  state.studio.price = SIZE_PRICES[size];
+  renderScreen();
+}
+function formulaMood(s){
+  if(s.top >= s.heart && s.top >= s.base) return '✨ Bright Citrus Lead • Balanced Heart';
+  if(s.base >= s.top && s.base >= s.heart) return '🌙 Warm Woody Base • Deep & Grounded';
+  return '🌸 Floral Heart Forward • Soft & Romantic';
+}
+
+/* ---------- Matcher / Quiz helpers ---------- */
+function renderQuiz(){
+  const total = QUIZ.length;
+  const step = state.quizStep;
+  const progress = Array.from({length: total}).map((_,i)=>`<div class="seg ${i<step?'done':''}"></div>`).join('');
+
+  if(step >= total){
+    const ref = state.quizAnswers.ref;
+    const result = MATCH_RESULTS[ref] || {name:'Velour Noir', tag:'Late Night • Espresso', key:'noir'};
+    return `<div class="quizwrap">
+      <div class="quizprogress">${Array.from({length:total}).map(()=>'<div class="seg done"></div>').join('')}</div>
+      <div class="resultcard">
+        <div class="rlabel">Your Match</div>
+        <h3>${result.name}</h3>
+        <p>Based on your answers, ${result.name} (${result.tag}) is your closest Velour Essence match${ref?` for ${ref}`:''}.</p>
+        <div class="resultbtns">
+          <button class="btn" style="width:auto;" onclick="go('house')">View in House Collection</button>
+          <button class="btn ghost" style="width:auto;" onclick="restartQuiz()">Retake Quiz</button>
+        </div>
+      </div>
+    </div>`;
+  }
+
+  const q = QUIZ[step];
+  const opts = q.options.map(o=>`<button class="quizopt" onclick="answerQuiz('${q.key}','${o.replace(/'/g,"\\'")}')">${o}</button>`).join('');
+  return `<div class="quizwrap">
+    <div class="quizprogress">${progress}</div>
+    <div class="quizq">${step+1}. ${q.q}</div>
+    ${opts}
+    ${step>0 ? '<button class="btn ghost" style="width:auto;padding:10px 18px;margin-top:6px;" onclick="quizBack()">&larr; Back</button>' : ''}
+  </div>`;
+}
+function answerQuiz(key,val){
+  state.quizAnswers[key] = val;
+  state.quizStep += 1;
+  renderScreen();
+}
+function quizBack(){
+  if(state.quizStep>0){
+    state.quizStep -= 1;
+    renderScreen();
+  }
+}
+function restartQuiz(){
+  state.quizStep = 0;
+  state.quizAnswers = {};
+  renderScreen();
+}
+
+function paymentRow(id,label){
+  return `<div class="radio-row ${state.payment===id?'selected':''}" onclick="selectPayment('${id}')">
+    <div class="radiodot"></div>${label}
+  </div>`;
+}
+function selectPayment(id){
+  state.payment = id;
+  renderScreen();
+}
+
+function updateCheckout(val, which){
+  state.checkout[which] = val;
+  // Re-render only the Pay button's disabled state / error text without losing input focus
+  const nameEl = document.getElementById('checkoutName');
+  const addrEl = document.getElementById('checkoutAddress');
+  const canPay = state.cart.length>0 && state.checkout.name.trim().length>1 && state.checkout.address.trim().length>4;
+  const payBtn = document.querySelector('#main .btn.green');
+  if(payBtn) payBtn.disabled = !canPay;
+  const err = document.querySelector('#main .fielderror');
+  if(canPay && err) err.remove();
+  else if(!canPay && !err && addrEl){
+    const div = document.createElement('div');
+    div.className='fielderror';
+    div.textContent='Please enter your full name and delivery address to continue.';
+    addrEl.insertAdjacentElement('afterend', div);
+  }
+}
+
+function submitPayment(){
+  const c = state.checkout;
+  if(state.cart.length===0){ toast('Your bag is empty'); return; }
+  if(c.name.trim().length<2 || c.address.trim().length<5){ toast('Please complete your name and address'); return; }
+  const paidTotal = cartTotal().toFixed(2);
+  state.cart = [];
+  state.checkout = {name:'', address:''};
+  renderNav();
+  toast(`Payment of R${paidTotal} simulated — thank you!`);
+  go('home');
+}
+
+function updateLabel(val, which){
+  if(which==='title'){
+    state.fragranceTitle = val;
+    document.getElementById('labelTitle').textContent = val || 'YOUR SIGNATURE';
+  } else {
+    state.fragranceSub = val;
+    document.getElementById('labelSub').textContent = val;
+  }
+}
+
+renderNav();
+renderScreen();
+</script>
+</body>
+</html>
