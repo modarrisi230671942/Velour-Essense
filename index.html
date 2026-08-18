@@ -6,6 +6,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<!-- Three.js for Interactive 3D Bottle Rendering -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <style>
   :root{
     --burgundy:#3D0C13;
@@ -292,8 +294,10 @@
     background:#F1ECE2;
     border:1px solid var(--line);
     border-radius:14px;
-    padding:40px;
+    padding:20px;
     display:flex;
+    flex-direction:column;
+    align-items:center;
     justify-content:center;
   }
   .bottlecap{
@@ -313,7 +317,16 @@
   .label .lt{font-family:'Cinzel',serif;font-weight:700;font-size:15px;color:var(--burgundy);margin-bottom:6px;word-break:break-word;}
   .label .ls{font-size:8.5px;letter-spacing:1px;color:var(--gray);text-transform:uppercase;}
 
-  /* cart / checkout */
+  /* 3D Bottle Canvas */
+  #bottleCanvas{
+    width:100%;
+    height:280px;
+    border-radius:12px;
+    background:transparent;
+    cursor:grab;
+  }
+
+  /* Cart / Checkout */
   .cartlist{display:flex;flex-direction:column;gap:14px;}
   .cartitem{
     display:flex;align-items:center;gap:16px;
@@ -362,7 +375,7 @@
     content:'';position:absolute;inset:3px;border-radius:50%;background:var(--burgundy);
   }
 
-  /* brand pages */
+  /* Brand Pages & Controls */
   .infocard h4{
     font-size:11px;letter-spacing:0.6px;text-transform:uppercase;color:var(--gold);
     margin:0 0 8px;font-weight:700;
@@ -391,39 +404,6 @@
   .crestlabel{font-weight:700;font-size:14px;margin-bottom:4px;}
   .crestsub{font-size:12px;color:var(--gray);}
   .crestcard.dark .crestsub{color:#E4CFA0;}
-  .prohibited{background:var(--red-bg);text-align:left;padding:22px;}
-  .prohibited h4{color:var(--red-text);font-weight:700;font-size:13.5px;margin:0 0 8px;}
-  .prohibited ul{margin:0;padding-left:16px;color:var(--red-text);font-size:12.5px;line-height:1.7;}
-
-  .swatch{border-radius:12px;overflow:hidden;border:1px solid var(--line);}
-  .swatchblock{height:80px;display:flex;align-items:flex-end;padding:10px;}
-  .hexchip{background:rgba(0,0,0,0.15);color:#fff;font-size:11px;font-weight:700;padding:3px 8px;border-radius:5px;}
-  .swatchmeta{background:#fff;padding:14px 16px;}
-  .swatchname{font-weight:700;font-size:14px;}
-  .swatchuse{font-size:12px;color:var(--gray);}
-
-  .typecard{padding:24px;}
-  .typelabel{font-size:11px;letter-spacing:0.6px;text-transform:uppercase;color:var(--gold);font-weight:700;margin-bottom:10px;}
-  .typesample{font-size:20px;color:var(--burgundy);margin-bottom:8px;}
-  .typesample.cinzel{font-family:'Cinzel',serif;font-weight:700;}
-  .typesample.jakarta{font-family:'Plus Jakarta Sans',sans-serif;font-weight:700;color:var(--ink);}
-  .typedesc{font-size:12.5px;color:var(--gray);}
-
-  .tonecard{padding:20px;font-size:14px;border-radius:10px;font-style:italic;font-weight:600;}
-  .tonecard.good{background:var(--green-bg);color:var(--green-text);}
-  .tonecard.bad{background:var(--red-bg);color:var(--red-text);}
-  .tonecard b{font-style:normal;margin-right:6px;}
-
-  .imglist{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:12px;}
-  .imglist li{font-size:14px;color:var(--ink);}
-  .imglist b{color:var(--burgundy);}
-
-  .placeholder{
-    display:flex;flex-direction:column;align-items:center;justify-content:center;
-    padding:80px 20px;border:1px dashed var(--gold-light);border-radius:14px;
-    color:var(--gray);text-align:center;gap:10px;
-  }
-  .placeholder h3{font-family:'Cinzel',serif;color:var(--burgundy);font-size:20px;margin:0;}
 
   .toast{
     position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(20px);
@@ -433,7 +413,7 @@
   }
   .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
 
-  /* Sensory guarantee + tier pricing (Home) */
+  /* Guarantee + Tier Pricing */
   .guarantee-card{
     background:#fff;border:1px solid var(--gold);border-left:4px solid var(--gold);
     border-radius:8px;padding:16px 18px;margin-bottom:24px;
@@ -452,7 +432,7 @@
   .tierprice{font-family:'Cinzel',serif;color:var(--burgundy);font-weight:700;font-size:20px;}
   .tiersub{font-size:11.5px;color:var(--gold);font-weight:600;margin-top:4px;}
 
-  /* Studio sliders */
+  /* Studio Sliders & Accord Pyramid */
   .studiogrid2{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
   .slidergroup{margin-bottom:18px;}
   .sliderlabel{display:flex;justify-content:space-between;font-size:13px;font-weight:600;margin-bottom:6px;}
@@ -464,9 +444,17 @@
     width:100%;padding:12px 14px;border:1px solid var(--line);border-radius:7px;
     font-size:13.5px;font-family:'Plus Jakarta Sans',sans-serif;background:#fff;color:var(--ink);margin-top:6px;
   }
-  .formulabox{
-    display:flex;flex-direction:column;justify-content:space-between;height:100%;
+  
+  /* Scent Accord Pyramid Visualizer */
+  .pyramid-wrap{
+    background:#fff;border:1px solid var(--line);border-radius:12px;padding:20px;margin-top:20px;
   }
+  .pyramid-tier{
+    margin-bottom:12px;
+  }
+  .pyramid-title{font-size:11px;font-weight:700;color:var(--gold);text-transform:uppercase;letter-spacing:0.8px;display:flex;justify-content:space-between;}
+  .pyramid-bar-bg{height:10px;background:var(--silk);border-radius:5px;overflow:hidden;margin-top:4px;}
+  .pyramid-bar-fill{height:100%;background:var(--burgundy);width:0%;transition:width 0.3s ease;}
 
   .hero{
     display:grid;grid-template-columns:1.1fr 0.9fr;gap:36px;align-items:center;
@@ -491,33 +479,11 @@
   .moodcard b{display:block;font-size:14.5px;color:var(--burgundy);margin-bottom:4px;font-family:'Cinzel',serif;}
   .moodcard span{font-size:12px;color:var(--gray);}
 
-  /* Studio */
-  .studiogrid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-bottom:24px;}
-  .notecol h4{
-    font-size:11px;font-weight:700;letter-spacing:0.8px;text-transform:uppercase;
-    color:var(--gold);margin-bottom:12px;
+  /* Studio Comparison Drawer */
+  .saved-formulas{
+    margin-top:20px;background:#fff;border:1px solid var(--line);border-radius:12px;padding:18px;
   }
-  .chip{
-    display:flex;align-items:center;justify-content:space-between;
-    background:#fff;border:1px solid var(--line);border-radius:8px;
-    padding:12px 14px;margin-bottom:8px;cursor:pointer;font-size:13.5px;font-weight:600;
-    transition:all .15s;
-  }
-  .chip:hover{border-color:var(--gold-light);}
-  .chip.selected{background:var(--burgundy);color:#fff;border-color:var(--burgundy);}
-  .chip .check{opacity:0;}
-  .chip.selected .check{opacity:1;}
-  .blendpanel{
-    background:#fff;border:1px solid var(--line);border-radius:14px;padding:28px;
-    text-align:center;
-  }
-  .blendname{font-family:'Cinzel',serif;font-size:22px;color:var(--burgundy);font-weight:700;margin-bottom:6px;}
-  .blenddesc{font-size:13.5px;color:var(--gray);margin-bottom:20px;}
-  .blendnotes{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-bottom:22px;}
-  .blendnotes span{
-    background:var(--silk);color:var(--burgundy);font-size:12px;font-weight:600;
-    padding:6px 12px;border-radius:20px;
-  }
+  .saved-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px dashed var(--line);font-size:13px;}
 
   /* Matcher / Quiz */
   .quizwrap{max-width:640px;}
@@ -540,23 +506,24 @@
   .resultbtns{display:flex;gap:12px;justify-content:center;}
   .resultbtns .btn{width:auto;padding:13px 22px;}
 
+  /* Live Lab Tracker UI */
+  .tracker-step{
+    display:flex;align-items:center;gap:12px;margin-bottom:12px;font-size:13px;
+  }
+  .tracker-dot{width:14px;height:14px;border-radius:50%;background:var(--line);}
+  .tracker-dot.active{background:var(--gold);box-shadow:0 0 8px var(--gold);}
+  .tracker-dot.done{background:var(--green);}
+
   @media (max-width: 860px){
-    .hero, .studiogrid, .moodgrid{grid-template-columns:1fr;}
-    .split, .grid-2, .grid-3{grid-template-columns:1fr;}
+    .hero, .moodgrid{grid-template-columns:1fr;}
+    .split, .grid-2, .grid-3, .studiogrid2{grid-template-columns:1fr;}
     header.nav{padding:14px 18px;}
     main{padding:24px 18px 50px;}
   }
 
   @media (max-width: 640px){
-    header.nav{
-      padding:12px 16px;
-      gap:10px;
-    }
-    .navwrap{
-      flex:1 1 100%;
-      order:3;
-      width:100%;
-    }
+    header.nav{padding:12px 16px;gap:10px;}
+    .navwrap{flex:1 1 100%;order:3;width:100%;}
     .tagline{display:none;}
     .wordmark{font-size:15px;}
     .crest{width:36px;height:36px;}
@@ -613,15 +580,17 @@ const NAV = [
 ];
 
 let state = {
-  screen: 'house',
+  screen: 'home',
   cart: [],
   fragranceTitle: 'ANAS SIGNATURE',
   fragranceSub: 'LIMITED EDITION • 2026',
   payment: 'payfast',
   studio: {top:30, heart:40, base:30, size:'50ml', price:400},
+  savedFormulas: [],
   quizStep: 0,
   quizAnswers: {},
-  checkout: {name:'', address:''},
+  checkout: {name:'', address:'', city:'Cape Town', postalCode:''},
+  labStatus: 'idle'
 };
 
 const SIZE_PRICES = {'30ml':300, '50ml':400, '100ml':500};
@@ -645,10 +614,10 @@ const QUIZ = [
 ];
 
 const MATCH_RESULTS = {
-  'Tom Ford Oud Wood': {name:'Velour Noir', tag:'Late Night • Espresso', key:'noir'},
-  'Maison Francis Kurkdjian Baccarat Rouge': {name:'Golden Aura', tag:'Sunset • Champagne', key:'aura'},
-  'Creed Aventus': {name:'Golden Aura', tag:'Sunset • Champagne', key:'aura'},
-  'Chanel Chance Eau Fraîche': {name:'Citrus Bloom', tag:'Morning • Coastal', key:'bloom'},
+  'Tom Ford Oud Wood': {name:'Velour Noir', tag:'Late Night • Espresso', key:'noir', formula:{top:20, heart:30, base:50}},
+  'Maison Francis Kurkdjian Baccarat Rouge': {name:'Golden Aura', tag:'Sunset • Champagne', key:'aura', formula:{top:25, heart:45, base:30}},
+  'Creed Aventus': {name:'Golden Aura', tag:'Sunset • Champagne', key:'aura', formula:{top:35, heart:35, base:30}},
+  'Chanel Chance Eau Fraîche': {name:'Citrus Bloom', tag:'Morning • Coastal', key:'bloom', formula:{top:50, heart:30, base:20}},
 };
 
 function cartCount(){ return state.cart.reduce((s,i)=>s+i.qty,0); }
@@ -722,6 +691,100 @@ function updateQty(idx, delta){
   renderScreen();
 }
 
+/* ---------- 3D Canvas Engine ---------- */
+let threeScene, threeCamera, threeRenderer, bottleMesh, liquidMesh;
+
+function init3DBottle(canvasId, liquidHex = 0xC5A059) {
+  const container = document.getElementById(canvasId);
+  if(!container || typeof THREE === 'undefined') return;
+
+  const width = container.clientWidth || 300;
+  const height = 280;
+
+  threeScene = new THREE.Scene();
+  threeCamera = new THREE.PerspectiveCamera(45, width / height, 0.1, 1000);
+  threeCamera.position.z = 6;
+
+  threeRenderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+  threeRenderer.setSize(width, height);
+  container.innerHTML = '';
+  container.appendChild(threeRenderer.domElement);
+
+  // Lighting
+  const ambientLight = new THREE.AmbientLight(0xffffff, 0.8);
+  threeScene.add(ambientLight);
+
+  const dirLight = new THREE.DirectionalLight(0xfff5e6, 1.2);
+  dirLight.position.set(5, 10, 7);
+  threeScene.add(dirLight);
+
+  // Glass Bottle Outer
+  const glassGeo = new THREE.BoxGeometry(1.6, 2.4, 1.0);
+  const glassMat = new THREE.MeshPhysicalMaterial({
+    color: 0xffffff,
+    transparent: true,
+    opacity: 0.35,
+    roughness: 0.1,
+    transmission: 0.9,
+    thickness: 0.5
+  });
+  bottleMesh = new THREE.Mesh(glassGeo, glassMat);
+
+  // Perfume Liquid Inner
+  const liquidGeo = new THREE.BoxGeometry(1.4, 1.8, 0.8);
+  const liquidMat = new THREE.MeshStandardMaterial({
+    color: liquidHex,
+    roughness: 0.2,
+    metalness: 0.1,
+    transparent: true,
+    opacity: 0.85
+  });
+  liquidMesh = new THREE.Mesh(liquidGeo, liquidMat);
+  liquidMesh.position.y = -0.2;
+  bottleMesh.add(liquidMesh);
+
+  // Bottle Cap
+  const capGeo = new THREE.CylinderGeometry(0.4, 0.4, 0.5, 32);
+  const capMat = new THREE.MeshStandardMaterial({ color: 0xC5A059, metalness: 0.8, roughness: 0.2 });
+  const capMesh = new THREE.Mesh(capGeo, capMat);
+  capMesh.position.y = 1.45;
+  bottleMesh.add(capMesh);
+
+  threeScene.add(bottleMesh);
+
+  // Interactive mouse drag rotation
+  let isDragging = false;
+  let prevMouse = { x: 0, y: 0 };
+  container.addEventListener('mousedown', e => { isDragging = true; prevMouse = { x: e.clientX, y: e.clientY }; });
+  window.addEventListener('mouseup', () => isDragging = false);
+  container.addEventListener('mousemove', e => {
+    if (!isDragging || !bottleMesh) return;
+    const deltaX = e.clientX - prevMouse.x;
+    const deltaY = e.clientY - prevMouse.y;
+    bottleMesh.rotation.y += deltaX * 0.01;
+    bottleMesh.rotation.x += deltaY * 0.01;
+    prevMouse = { x: e.clientX, y: e.clientY };
+  });
+
+  function animate() {
+    requestAnimationFrame(animate);
+    if (!isDragging && bottleMesh) {
+      bottleMesh.rotation.y += 0.005;
+    }
+    threeRenderer.render(threeScene, threeCamera);
+  }
+  animate();
+}
+
+function update3DLiquidColor(top, heart, base) {
+  if (!liquidMesh) return;
+  // Dynamic color calculation based on scent ratio
+  const r = Math.min(255, Math.floor((top * 3.5) + (base * 2)));
+  const g = Math.min(255, Math.floor((heart * 2.5) + 80));
+  const b = Math.min(255, Math.floor(base * 1.5));
+  liquidMesh.material.color.setRGB(r / 255, g / 255, b / 255);
+}
+
 /* ---------- Screen templates ---------- */
 function screenHeader(kicker, eyebrow, title, sub){
   return `
@@ -730,13 +793,6 @@ function screenHeader(kicker, eyebrow, title, sub){
     <h1>${title}</h1>
     <p class="subtext">${sub}</p>
   `;
-}
-
-function placeholder(name, note){
-  return `<div class="placeholder">
-    <h3>${name}</h3>
-    <p style="max-width:420px;margin:0;font-size:13.5px;">${note}</p>
-  </div>`;
 }
 
 function productCard(title, tag, tagIcon, likeText, price, key){
@@ -750,14 +806,48 @@ function productCard(title, tag, tagIcon, likeText, price, key){
   </div>`;
 }
 
-function kitCard(title, price, voucher, cta, key){
+function tierCard(name, sub, price, featured=false){
   return `
-  <div class="card">
-    <h3 style="text-align:left;">${title}</h3>
-    <div class="kitprice" style="text-align:left;">R${price.toFixed(2)}</div>
-    <div class="voucherbar">Includes R${price} voucher inside! (Kit becomes FREE)</div>
-    <button class="btn" onclick="addToCart({key:'${key}', title:'${title}', sub:'+ R${price} Voucher Included', price:${price}})">${cta}</button>
-  </div>`;
+    <div class="tiercard ${featured?'featured':''}" onclick="go('studio')">
+      <div class="tiername">${name}</div>
+      <div class="tierprice">R${price}</div>
+      <div class="tiersub">${sub}</div>
+    </div>
+  `;
+}
+
+function updateSlider(type, val) {
+  state.studio[type] = parseInt(val);
+  document.getElementById(`${type}Val`).innerText = `${val}%`;
+  
+  // Update Scent Accord Pyramid Visualizer
+  const topBar = document.getElementById('pyramid-top');
+  const heartBar = document.getElementById('pyramid-heart');
+  const baseBar = document.getElementById('pyramid-base');
+  if(topBar) topBar.style.width = `${state.studio.top}%`;
+  if(heartBar) heartBar.style.width = `${state.studio.heart}%`;
+  if(baseBar) baseBar.style.width = `${state.studio.base}%`;
+
+  update3DLiquidColor(state.studio.top, state.studio.heart, state.studio.base);
+}
+
+function updateSize(val) {
+  state.studio.size = val;
+  state.studio.price = SIZE_PRICES[val];
+  document.getElementById('studioPrice').innerText = `R${state.studio.price}`;
+}
+
+function saveCurrentFormula() {
+  const name = `Bespoke Blend #${state.savedFormulas.length + 1}`;
+  state.savedFormulas.push({
+    name,
+    top: state.studio.top,
+    heart: state.studio.heart,
+    base: state.studio.base,
+    size: state.studio.size
+  });
+  toast(`Saved ${name} to Comparison Drawer`);
+  renderScreen();
 }
 
 function renderScreen(){
@@ -843,7 +933,7 @@ function renderScreen(){
   }
   else if(state.screen==='studio'){
     const s = state.studio;
-    html = screenHeader('CUSTOM BUILDER', 'Interactive Formulation', 'Digital Scent Studio', 'Adjust fragrance oil ratios below. Notes are mapped visually to sensory emotions.')
+    html = screenHeader('CUSTOM BUILDER', 'Interactive Formulation', 'Digital Scent Studio', 'Adjust fragrance oil ratios below. Notes are mapped visually to interactive 3D renderings and accord pyramids.')
       + `<div class="studiogrid2">
           <div class="card">
             <div class="eyebrow" style="margin-bottom:14px;">Step 1: Balance Raw Oils</div>
@@ -859,128 +949,195 @@ function renderScreen(){
               <div class="sliderlabel"><span>Amber &amp; Cedar (Base)</span><span id="baseVal">${s.base}%</span></div>
               <input type="range" min="10" max="60" value="${s.base}" oninput="updateSlider('base', this.value)">
             </div>
+            
             <div style="margin-top:20px;">
               <label class="field-label">Step 2: Choose Size</label>
               <select class="input-select" onchange="updateSize(this.value)">
-                <option value="30ml" ${s.size==='30ml'?'selected':''}>30ml Eau de Parfum — R300</option>
-                <option value="50ml" ${s.size==='50ml'?'selected':''}>50ml Eau de Parfum — R400</option>
-                <option value="100ml" ${s.size==='100ml'?'selected':''}>100ml Eau de Parfum — R500</option>
+                <option value="30ml" ${s.size==='30ml'?'selected':''}>30ml Eau de Parfum (R300)</option>
+                <option value="50ml" ${s.size==='50ml'?'selected':''}>50ml Eau de Parfum (R400)</option>
+                <option value="100ml" ${s.size==='100ml'?'selected':''}>100ml Eau de Parfum (R500)</option>
               </select>
             </div>
-          </div>
-          <div class="card formulabox">
-            <div>
-              <div class="eyebrow" style="margin-bottom:10px;">Formula Breakdown</div>
-              <div class="tag">${formulaMood(s)}</div>
-              <div class="price" style="margin-top:10px;">R${s.price}.00</div>
+
+            <!-- Animated Accord Pyramid Visualizer -->
+            <div class="pyramid-wrap">
+              <div class="eyebrow">Scent Pyramid Volatility</div>
+              <div class="pyramid-tier">
+                <div class="pyramid-title"><span>Top Accord (0-30 mins)</span><span>${s.top}%</span></div>
+                <div class="pyramid-bar-bg"><div id="pyramid-top" class="pyramid-bar-fill" style="width:${s.top}%;"></div></div>
+              </div>
+              <div class="pyramid-tier">
+                <div class="pyramid-title"><span>Heart Accord (30m - 4hrs)</span><span>${s.heart}%</span></div>
+                <div class="pyramid-bar-bg"><div id="pyramid-heart" class="pyramid-bar-fill" style="width:${s.heart}%;"></div></div>
+              </div>
+              <div class="pyramid-tier">
+                <div class="pyramid-title"><span>Base Accord (4hrs+)</span><span>${s.base}%</span></div>
+                <div class="pyramid-bar-bg"><div id="pyramid-base" class="pyramid-bar-fill" style="width:${s.base}%;"></div></div>
+              </div>
             </div>
-            <button class="btn" onclick="go('personalize')">Next: Personalize Label &rarr;</button>
           </div>
-        </div>`;
+
+          <div class="card" style="text-align:center;">
+            <div class="eyebrow">3D Bottle Preview</div>
+            <div id="bottleCanvas"></div>
+            <div class="price" id="studioPrice">R${s.price}</div>
+            <div style="display:flex;gap:10px;">
+              <button class="btn ghost" onclick="saveCurrentFormula()">Save Formula</button>
+              <button class="btn" onclick="addToCart({key:'custom', title:'Custom Perfume Blend', sub:'${s.size} • Top:${s.top}% Heart:${s.heart}% Base:${s.base}%', price:${s.price}})">Add Custom Bottle to Cart</button>
+            </div>
+          </div>
+        </div>
+
+        ${state.savedFormulas.length > 0 ? `
+          <div class="saved-formulas">
+            <div class="eyebrow">Formula Comparison Drawer</div>
+            ${state.savedFormulas.map(f => `
+              <div class="saved-row">
+                <b>${f.name} (${f.size})</b>
+                <span>Top: ${f.top}% | Heart: ${f.heart}% | Base: ${f.base}%</span>
+              </div>
+            `).join('')}
+          </div>
+        ` : ''}`;
+
+    setTimeout(() => init3DBottle('bottleCanvas'), 50);
   }
   else if(state.screen==='personalize'){
-    html = screenHeader('LABEL CUSTOMIZATION', 'Real-Time Printing Mirror', 'Personalize Your Bottle', 'Type below to see your custom name updated live on the luxury label preview.')
+    html = screenHeader('ENGRAVING', 'Custom Label Atelier', 'Personalize Your Bottle', 'Add custom text to your label or bottle face.')
       + `<div class="split">
-          <div>
+          <div class="card">
             <div class="field">
               <label class="field-label">Fragrance Title</label>
-              <input type="text" id="fragTitle" value="${state.fragranceTitle}" oninput="updateLabel(this.value,'title')">
+              <input type="text" value="${state.fragranceTitle}" maxlength="20" oninput="state.fragranceTitle=this.value.toUpperCase();document.getElementById('lblTitle').innerText=state.fragranceTitle;">
             </div>
             <div class="field">
               <label class="field-label">Subtitle / Year</label>
-              <input type="text" id="fragSub" value="${state.fragranceSub}" oninput="updateLabel(this.value,'sub')">
+              <input type="text" value="${state.fragranceSub}" maxlength="30" oninput="state.fragranceSub=this.value.toUpperCase();document.getElementById('lblSub').innerText=state.fragranceSub;">
             </div>
+            <button class="btn" onclick="toast('Saved Custom Engraving!')">Save Personalization</button>
           </div>
-          <div>
-            <div class="preview-wrap">
-              <div>
-                <div class="bottlecap"></div>
-                <div class="label">
-                  <div class="lv">VELOUR ESSENCE</div>
-                  <div class="lt" id="labelTitle">${state.fragranceTitle}</div>
-                  <div class="ls" id="labelSub">${state.fragranceSub}</div>
-                </div>
-              </div>
+
+          <div class="preview-wrap">
+            <div class="bottlecap"></div>
+            <div class="label">
+              <div class="lv">VELOUR ESSENCE</div>
+              <div class="lt" id="lblTitle">${state.fragranceTitle}</div>
+              <div class="ls" id="lblSub">${state.fragranceSub}</div>
             </div>
-            <div style="height:16px;"></div>
-            <button class="btn" onclick="addToCart({key:'custom', title:'Custom: '+document.getElementById('fragTitle').value, sub:'+ Includes Free 2ml Mini Sample', price:state.studio.price})">Add to Cart — R${state.studio.price}</button>
           </div>
         </div>`;
   }
   else if(state.screen==='matcher'){
-    html = screenHeader('SCENT MATCHER', 'Find Your Match', 'The Scent Matcher', "Answer a few quick questions and we'll recommend a Velour Essence dupe for your favorite designer scent.")
-      + renderQuiz();
+    const q = QUIZ[state.quizStep];
+    if(!q){
+      const ref = state.quizAnswers['ref'] || 'Tom Ford Oud Wood';
+      const res = MATCH_RESULTS[ref] || MATCH_RESULTS['Tom Ford Oud Wood'];
+      html = screenHeader('QUIZ RESULT', 'Sensory Matching Engine', 'Your Scent Match', 'Based on your answers, here is your ideal signature blend:')
+        + `<div class="resultcard">
+            <div class="rlabel">${res.tag}</div>
+            <h3>${res.name}</h3>
+            <p>Formulated matching your preference for ${state.quizAnswers['mood'] || 'luxury'}.</p>
+            <div class="resultbtns">
+              <button class="btn" onclick="addToCart({key:'${res.key}', title:'${res.name}', sub:'Matched Signature Scent', price:400})">Add to Cart (R400)</button>
+              <button class="btn ghost" onclick="state.studio.top=${res.formula.top};state.studio.heart=${res.formula.heart};state.studio.base=${res.formula.base};go('studio');">Customize in Studio</button>
+            </div>
+          </div>`;
+    } else {
+      html = screenHeader('QUIZ', 'Interactive Matcher', 'Find Your Scent', 'Answer 3 simple questions to discover your ideal olfactory match.')
+        + `<div class="quizwrap card">
+            <div class="quizprogress">
+              ${QUIZ.map((_,i)=>`<div class="seg ${i<=state.quizStep?'done':''}"></div>`).join('')}
+            </div>
+            <div class="quizq">${q.q}</div>
+            ${q.options.map(opt=>`
+              <button class="quizopt" onclick="state.quizAnswers['${q.key}']='${opt}';state.quizStep++;renderScreen();">${opt}</button>
+            `).join('')}
+          </div>`;
+    }
   }
   else if(state.screen==='house'){
-    html = screenHeader('HOUSE COLLECTION', 'Visualized Scent Profiles', 'The Signature Collection', 'Master-blended perfumes mapped to luxury scent families.')
+    html = screenHeader('COLLECTION', 'Curated Perfumery', 'The House Collection', 'Handcrafted, long-lasting signature fragrances.')
       + `<div class="grid grid-3">
-          ${productCard('Velour Noir','Late Night • Espresso','🌙','Oud Wood',400,'noir')}
-          ${productCard('Golden Aura','Sunset • Champagne','✨','Baccarat Rouge',400,'aura')}
-          ${productCard('Citrus Bloom','Morning • Coastal','☀️','Neroli Portofino',400,'bloom')}
+          ${productCard('Velour Noir', 'Late Night • Espresso', '🌙', 'Tom Ford Oud Wood', 400, 'noir')}
+          ${productCard('Golden Aura', 'Sunset • Champagne', '✨', 'Baccarat Rouge 540', 400, 'aura')}
+          ${productCard('Citrus Bloom', 'Morning • Coastal', '🍊', 'Chanel Chance Eau Fraîche', 400, 'bloom')}
         </div>`;
   }
   else if(state.screen==='discovery'){
-    html = screenHeader('DISCOVERY KITS', 'Risk-Free Online Buying', 'Discovery &amp; Sample Kits', 'Try fragrances on skin at home first. Includes 100% money-back voucher code!')
+    html = screenHeader('SAMPLES', '100% Refundable', 'Discovery Kits', 'Sample luxury scents at home. Receive the full kit cost back as a store voucher.')
       + `<div class="grid grid-2">
-          ${kitCard('Signature Discovery Trio',180,180,'Order Trio','trio2')}
-          ${kitCard('Custom Note Tester Box',220,220,'Build Box','testerbox')}
+          <div class="card">
+            <h3>House Discovery Set</h3>
+            <div class="price">R180</div>
+            <div class="voucherbar">Includes R180 voucher inside! (Kit becomes FREE)</div>
+            <button class="btn" onclick="addToCart({key:'kit-house', title:'House Discovery Set', sub:'Includes R180 Voucher', price:180})">Add Kit to Cart</button>
+          </div>
+          <div class="card">
+            <h3>Atelier Custom Sample Pack</h3>
+            <div class="price">R220</div>
+            <div class="voucherbar">Includes R220 voucher inside! (Kit becomes FREE)</div>
+            <button class="btn" onclick="addToCart({key:'kit-custom', title:'Atelier Sample Pack', sub:'Includes R220 Voucher', price:220})">Add Kit to Cart</button>
+          </div>
         </div>`;
   }
   else if(state.screen==='cart'){
-    const items = state.cart.map((i,idx)=>`
-      <div class="cartitem">
-        <div class="cicon">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 7h12l-1 13H7L6 7z"/><path d="M9 7V5a3 3 0 0 1 6 0v2"/></svg>
-        </div>
-        <div>
-          <div class="cititle">${i.title}</div>
-          <div class="cisub">${i.sub}</div>
-          <div class="qtystepper">
-            <button class="qtybtn" onclick="updateQty(${idx},-1)" aria-label="Decrease quantity of ${i.title.replace(/"/g,'&quot;')}">&minus;</button>
-            <span class="qtyval">${i.qty}</span>
-            <button class="qtybtn" onclick="updateQty(${idx},1)" aria-label="Increase quantity of ${i.title.replace(/"/g,'&quot;')}">&plus;</button>
+    html = screenHeader('CART', 'Review Items', 'Your Shopping Cart', 'All orders include free samples and risk-free returns.')
+      + (state.cart.length === 0 ? `<div class="card" style="text-align:center;padding:40px;">Your cart is empty.<br><br><button class="btn" style="width:auto;margin:0 auto;" onclick="go('house')">Browse Perfumes</button></div>` :
+        `<div class="split">
+          <div class="cartlist">
+            ${state.cart.map((item, idx) => `
+              <div class="cartitem">
+                <div class="cicon">🧪</div>
+                <div>
+                  <div class="cititle">${item.title}</div>
+                  <div class="cisub">${item.sub}</div>
+                  <div class="qtystepper">
+                    <button class="qtybtn" onclick="updateQty(${idx}, -1)">-</button>
+                    <span class="qtyval">${item.qty}</span>
+                    <button class="qtybtn" onclick="updateQty(${idx}, 1)">+</button>
+                  </div>
+                </div>
+                <div class="ciprice">
+                  R${item.price * item.qty}
+                  <button class="removebtn" onclick="removeFromCart(${idx})">&times;</button>
+                </div>
+              </div>
+            `).join('')}
           </div>
-        </div>
-        <div class="ciprice">R${(i.price*i.qty).toFixed(2)}${i.qty>1?`<div class="ciunit">R${i.price} each</div>`:''}</div>
-        <button class="removebtn" onclick="removeFromCart(${idx})" aria-label="Remove ${i.title.replace(/"/g,'&quot;')} from cart" title="Remove">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
-        </button>
-      </div>`).join('');
-    html = screenHeader('SHOPPING CART', 'Order Overview', 'Your Fragrance Bag', 'Review items and risk-free sample guarantees.')
-      + `<div class="split" style="grid-template-columns:1.6fr 1fr;">
-          <div class="cartlist">${items || '<div class="placeholder"><h3>Your bag is empty</h3><p style="margin:0 0 16px;">Add something from the House Collection or a Discovery Kit.</p><button class="btn" style="width:auto;padding:12px 22px;" onclick="go(\'house\')">Browse the Collection</button></div>'}</div>
           <div class="summarycard">
-            <div class="summarylabel">Summary</div>
-            <div class="totalrow" style="border-bottom:none;padding-bottom:0;margin-bottom:6px;font-weight:600;font-size:13px;color:var(--gray);"><span>Items</span><span>${cartCount()}</span></div>
-            <div class="totalrow"><span>Total</span><span>R${cartTotal().toFixed(2)}</span></div>
-            <button class="btn" ${state.cart.length===0?'disabled':''} onclick="go('checkout')">Proceed to Checkout &rarr;</button>
+            <div class="summarylabel">Order Summary</div>
+            <div class="totalrow"><span>Total:</span><span>R${cartTotal()}</span></div>
+            <button class="btn" onclick="go('checkout')">Proceed to Checkout</button>
           </div>
-        </div>`;
+        </div>`);
   }
   else if(state.screen==='checkout'){
-    const c = state.checkout;
-    const canPay = state.cart.length>0 && c.name.trim().length>1 && c.address.trim().length>4;
-    html = screenHeader('CHECKOUT', 'Localized Payment Options', 'Express Checkout', 'Complete address and select payment gateway.')
+    html = screenHeader('CHECKOUT', 'Secure Order', 'Delivery & Payment', 'Complete your details to send your order directly to our formulation lab.')
       + `<div class="split">
           <div class="card">
             <div class="field">
               <label class="field-label">Full Name</label>
-              <input type="text" id="checkoutName" value="${c.name}" placeholder="e.g. Anas M" oninput="updateCheckout(this.value,'name')">
+              <input type="text" id="custName" value="${state.checkout.name}" placeholder="Anas Smith">
             </div>
             <div class="field">
-              <label class="field-label">Delivery Address</label>
-              <input type="text" id="checkoutAddress" value="${c.address}" placeholder="Street, City" oninput="updateCheckout(this.value,'address')">
-              ${!canPay && state.cart.length>0 ? '<div class="fielderror">Please enter your full name and delivery address to continue.</div>':''}
+              <label class="field-label">Street Address</label>
+              <input type="text" id="custAddr" value="${state.checkout.address}" placeholder="123 Long Street">
             </div>
+            <div class="field">
+              <label class="field-label">City</label>
+              <input type="text" id="custCity" value="${state.checkout.city}">
+            </div>
+            <button class="btn green" onclick="state.labStatus='formulating';renderScreen();toast('Order Placed Successfully!')">Place Order &amp; Pay R${cartTotal()}</button>
           </div>
+
           <div class="card">
-            <div class="summarylabel" style="margin-bottom:16px;">Payment Gateway</div>
-            ${paymentRow('payfast','PayFast / Ozow Instant EFT')}
-            ${paymentRow('card','Credit / Debit Card')}
-            ${paymentRow('payflex','PayFlex (4× Interest-Free)')}
-            <div style="height:8px;"></div>
-            ${state.cart.length===0 ? '<div class="voucherbar" style="text-align:center;">Your bag is empty — add something before checking out.</div>' : ''}
-            <button class="btn green" ${canPay?'':'disabled'} onclick="submitPayment()">Pay R${cartTotal().toFixed(2)}</button>
+            <div class="eyebrow">Real-time Lab Tracker</div>
+            <div style="margin-top:16px;">
+              <div class="tracker-step"><div class="tracker-dot ${state.labStatus!=='idle'?'done':'active'}"></div><span>Order Received</span></div>
+              <div class="tracker-step"><div class="tracker-dot ${state.labStatus==='formulating'?'active':''}"></div><span>Formulating Oils in Lab</span></div>
+              <div class="tracker-step"><div class="tracker-dot"></div><span>Bottling &amp; Custom Engraving</span></div>
+              <div class="tracker-step"><div class="tracker-dot"></div><span>Dispatched via Courier</span></div>
+            </div>
           </div>
         </div>`;
   }
@@ -991,137 +1148,7 @@ function renderScreen(){
   main.classList.add('anim');
 }
 
-/* ---------- Home helpers ---------- */
-function tierCard(size, name, price, featured){
-  return `<div class="tiercard ${featured?'featured':''}" onclick="selectTier('${size}')">
-    <div class="tiername">${size} ${name}</div>
-    <div class="tierprice">R${price}</div>
-    <div class="tiersub">+ Free 2ml Sample</div>
-  </div>`;
-}
-function selectTier(size){
-  state.studio.size = size;
-  state.studio.price = SIZE_PRICES[size];
-  go('studio');
-}
-
-/* ---------- Studio helpers ---------- */
-function updateSlider(which, val){
-  state.studio[which] = parseInt(val,10);
-  document.getElementById(which+'Val').textContent = val+'%';
-  const tagEl = document.querySelector('#main .tag');
-  if(tagEl) tagEl.textContent = formulaMood(state.studio);
-}
-function updateSize(size){
-  state.studio.size = size;
-  state.studio.price = SIZE_PRICES[size];
-  renderScreen();
-}
-function formulaMood(s){
-  if(s.top >= s.heart && s.top >= s.base) return '✨ Bright Citrus Lead • Balanced Heart';
-  if(s.base >= s.top && s.base >= s.heart) return '🌙 Warm Woody Base • Deep & Grounded';
-  return '🌸 Floral Heart Forward • Soft & Romantic';
-}
-
-/* ---------- Matcher / Quiz helpers ---------- */
-function renderQuiz(){
-  const total = QUIZ.length;
-  const step = state.quizStep;
-  const progress = Array.from({length: total}).map((_,i)=>`<div class="seg ${i<step?'done':''}"></div>`).join('');
-
-  if(step >= total){
-    const ref = state.quizAnswers.ref;
-    const result = MATCH_RESULTS[ref] || {name:'Velour Noir', tag:'Late Night • Espresso', key:'noir'};
-    return `<div class="quizwrap">
-      <div class="quizprogress">${Array.from({length:total}).map(()=>'<div class="seg done"></div>').join('')}</div>
-      <div class="resultcard">
-        <div class="rlabel">Your Match</div>
-        <h3>${result.name}</h3>
-        <p>Based on your answers, ${result.name} (${result.tag}) is your closest Velour Essence match${ref?` for ${ref}`:''}.</p>
-        <div class="resultbtns">
-          <button class="btn" style="width:auto;" onclick="go('house')">View in House Collection</button>
-          <button class="btn ghost" style="width:auto;" onclick="restartQuiz()">Retake Quiz</button>
-        </div>
-      </div>
-    </div>`;
-  }
-
-  const q = QUIZ[step];
-  const opts = q.options.map(o=>`<button class="quizopt" onclick="answerQuiz('${q.key}','${o.replace(/'/g,"\\'")}')">${o}</button>`).join('');
-  return `<div class="quizwrap">
-    <div class="quizprogress">${progress}</div>
-    <div class="quizq">${step+1}. ${q.q}</div>
-    ${opts}
-    ${step>0 ? '<button class="btn ghost" style="width:auto;padding:10px 18px;margin-top:6px;" onclick="quizBack()">&larr; Back</button>' : ''}
-  </div>`;
-}
-function answerQuiz(key,val){
-  state.quizAnswers[key] = val;
-  state.quizStep += 1;
-  renderScreen();
-}
-function quizBack(){
-  if(state.quizStep>0){
-    state.quizStep -= 1;
-    renderScreen();
-  }
-}
-function restartQuiz(){
-  state.quizStep = 0;
-  state.quizAnswers = {};
-  renderScreen();
-}
-
-function paymentRow(id,label){
-  return `<div class="radio-row ${state.payment===id?'selected':''}" onclick="selectPayment('${id}')">
-    <div class="radiodot"></div>${label}
-  </div>`;
-}
-function selectPayment(id){
-  state.payment = id;
-  renderScreen();
-}
-
-function updateCheckout(val, which){
-  state.checkout[which] = val;
-  // Re-render only the Pay button's disabled state / error text without losing input focus
-  const nameEl = document.getElementById('checkoutName');
-  const addrEl = document.getElementById('checkoutAddress');
-  const canPay = state.cart.length>0 && state.checkout.name.trim().length>1 && state.checkout.address.trim().length>4;
-  const payBtn = document.querySelector('#main .btn.green');
-  if(payBtn) payBtn.disabled = !canPay;
-  const err = document.querySelector('#main .fielderror');
-  if(canPay && err) err.remove();
-  else if(!canPay && !err && addrEl){
-    const div = document.createElement('div');
-    div.className='fielderror';
-    div.textContent='Please enter your full name and delivery address to continue.';
-    addrEl.insertAdjacentElement('afterend', div);
-  }
-}
-
-function submitPayment(){
-  const c = state.checkout;
-  if(state.cart.length===0){ toast('Your bag is empty'); return; }
-  if(c.name.trim().length<2 || c.address.trim().length<5){ toast('Please complete your name and address'); return; }
-  const paidTotal = cartTotal().toFixed(2);
-  state.cart = [];
-  state.checkout = {name:'', address:''};
-  renderNav();
-  toast(`Payment of R${paidTotal} simulated — thank you!`);
-  go('home');
-}
-
-function updateLabel(val, which){
-  if(which==='title'){
-    state.fragranceTitle = val;
-    document.getElementById('labelTitle').textContent = val || 'YOUR SIGNATURE';
-  } else {
-    state.fragranceSub = val;
-    document.getElementById('labelSub').textContent = val;
-  }
-}
-
+// Initial Kickoff
 renderNav();
 renderScreen();
 </script>
