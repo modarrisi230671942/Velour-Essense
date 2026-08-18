@@ -263,13 +263,6 @@
     border-radius:6px;
     margin-bottom:16px;
   }
-  .kitprice{
-    font-family:'Cinzel',serif;
-    color:var(--burgundy);
-    font-weight:700;
-    font-size:22px;
-    margin-bottom:14px;
-  }
 
   /* Personalize */
   .split{display:grid;grid-template-columns:1fr 1fr;gap:28px;align-items:start;}
@@ -278,7 +271,6 @@
     text-transform:uppercase;color:var(--gray);margin-bottom:8px;
   }
   .field{margin-bottom:22px;}
-  .fielderror{color:var(--red-text);font-size:12px;font-weight:600;margin-top:6px;}
   input[type=text]{
     width:100%;
     padding:12px 14px;
@@ -320,7 +312,7 @@
   /* 3D Bottle Canvas */
   #bottleCanvas{
     width:100%;
-    height:280px;
+    height:300px;
     border-radius:12px;
     background:transparent;
     cursor:grab;
@@ -339,7 +331,6 @@
   .cititle{font-weight:700;font-size:14.5px;}
   .cisub{font-size:12px;color:var(--gold);font-weight:600;margin-top:2px;}
   .ciprice{margin-left:auto;font-family:'Cinzel',serif;font-weight:700;color:var(--burgundy);font-size:16px;flex-shrink:0;text-align:right;}
-  .ciunit{font-family:'Plus Jakarta Sans',sans-serif;font-weight:600;font-size:11px;color:var(--gray);margin-top:2px;}
   .qtystepper{display:flex;align-items:center;gap:10px;margin-top:8px;}
   .qtybtn{
     width:24px;height:24px;border-radius:50%;border:1px solid var(--line);background:#fff;
@@ -355,8 +346,6 @@
     margin-left:10px;transition:all .15s;
   }
   .removebtn:hover{background:var(--red-bg);border-color:var(--red-text);color:var(--red-text);}
-  .btn:disabled{background:var(--line);color:var(--gray);cursor:not-allowed;}
-  .btn:disabled:hover{background:var(--line);}
   .summarycard{background:#fff;border:1px solid var(--line);border-radius:12px;padding:22px;height:fit-content;}
   .summarylabel{color:var(--gold);font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:14px;}
   .totalrow{display:flex;justify-content:space-between;font-weight:700;font-size:15px;margin-bottom:20px;padding-bottom:16px;border-bottom:1px solid var(--line);}
@@ -365,45 +354,17 @@
     display:flex;align-items:center;gap:12px;
     border:1px solid var(--line);border-radius:8px;
     padding:14px 16px;margin-bottom:10px;cursor:pointer;
-    font-size:14px;font-weight:600;
+    font-size:13.5px;font-weight:600;
     transition:all .15s;
+    background:#fff;
   }
+  .radio-row:hover{border-color:var(--gold);}
   .radio-row.selected{border-color:var(--burgundy);background:var(--silk);}
   .radiodot{width:18px;height:18px;border-radius:50%;border:2px solid var(--gray);flex-shrink:0;position:relative;}
   .radio-row.selected .radiodot{border-color:var(--burgundy);}
   .radio-row.selected .radiodot::after{
     content:'';position:absolute;inset:3px;border-radius:50%;background:var(--burgundy);
   }
-
-  /* Brand Pages & Controls */
-  .infocard h4{
-    font-size:11px;letter-spacing:0.6px;text-transform:uppercase;color:var(--gold);
-    margin:0 0 8px;font-weight:700;
-  }
-  .infocard strong{display:block;font-size:15px;margin-bottom:6px;color:var(--ink);}
-  .infocard p, .infocard li{font-size:13.5px;color:var(--gray);line-height:1.6;}
-  .infocard ul{margin:0;padding-left:18px;}
-  .divider{border:none;border-top:1px solid var(--gold-light);margin:28px 0 20px;}
-  h2.section{
-    font-family:'Cinzel',serif;color:var(--burgundy);font-size:16px;margin:0 0 4px;
-    display:flex;align-items:center;gap:9px;
-  }
-  h2.section::before{
-    content:'';width:7px;height:7px;background:var(--gold);
-    transform:rotate(45deg);flex-shrink:0;
-  }
-
-  .crestcard{text-align:center;padding:30px 20px;}
-  .crestcard.dark{background:var(--burgundy);color:#fff;}
-  .crestcard.dark .crestcircle{border-color:var(--gold);}
-  .crestcircle{
-    width:52px;height:52px;border-radius:50%;border:2px solid var(--burgundy);
-    display:flex;align-items:center;justify-content:center;margin:0 auto 12px;
-    font-family:'Cinzel',serif;font-weight:700;color:inherit;
-  }
-  .crestlabel{font-weight:700;font-size:14px;margin-bottom:4px;}
-  .crestsub{font-size:12px;color:var(--gray);}
-  .crestcard.dark .crestsub{color:#E4CFA0;}
 
   .toast{
     position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(20px);
@@ -413,7 +374,6 @@
   }
   .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
 
-  /* Guarantee + Tier Pricing */
   .guarantee-card{
     background:#fff;border:1px solid var(--gold);border-left:4px solid var(--gold);
     border-radius:8px;padding:16px 18px;margin-bottom:24px;
@@ -437,21 +397,16 @@
   .slidergroup{margin-bottom:18px;}
   .sliderlabel{display:flex;justify-content:space-between;font-size:13px;font-weight:600;margin-bottom:6px;}
   .sliderlabel span:last-child{color:var(--burgundy);font-family:'Cinzel',serif;}
-  input[type=range]{
-    width:100%;accent-color:var(--burgundy);
-  }
+  input[type=range]{width:100%;accent-color:var(--burgundy);}
   select.input-select{
     width:100%;padding:12px 14px;border:1px solid var(--line);border-radius:7px;
     font-size:13.5px;font-family:'Plus Jakarta Sans',sans-serif;background:#fff;color:var(--ink);margin-top:6px;
   }
   
-  /* Scent Accord Pyramid Visualizer */
   .pyramid-wrap{
     background:#fff;border:1px solid var(--line);border-radius:12px;padding:20px;margin-top:20px;
   }
-  .pyramid-tier{
-    margin-bottom:12px;
-  }
+  .pyramid-tier{margin-bottom:12px;}
   .pyramid-title{font-size:11px;font-weight:700;color:var(--gold);text-transform:uppercase;letter-spacing:0.8px;display:flex;justify-content:space-between;}
   .pyramid-bar-bg{height:10px;background:var(--silk);border-radius:5px;overflow:hidden;margin-top:4px;}
   .pyramid-bar-fill{height:100%;background:var(--burgundy);width:0%;transition:width 0.3s ease;}
@@ -479,7 +434,6 @@
   .moodcard b{display:block;font-size:14.5px;color:var(--burgundy);margin-bottom:4px;font-family:'Cinzel',serif;}
   .moodcard span{font-size:12px;color:var(--gray);}
 
-  /* Studio Comparison Drawer */
   .saved-formulas{
     margin-top:20px;background:#fff;border:1px solid var(--line);border-radius:12px;padding:18px;
   }
@@ -691,98 +645,179 @@ function updateQty(idx, delta){
   renderScreen();
 }
 
-/* ---------- 3D Canvas Engine ---------- */
-let threeScene, threeCamera, threeRenderer, bottleMesh, liquidMesh;
+/* ---------- Advanced 3D Refractive Glass & Volumetric Shader Fluid Engine ---------- */
+let threeScene, threeCamera, threeRenderer, bottleGroup, oilMaterial, animationFrameId;
 
 function init3DBottle(canvasId, liquidHex = 0xC5A059) {
   const container = document.getElementById(canvasId);
   if(!container || typeof THREE === 'undefined') return;
 
+  if (animationFrameId) cancelAnimationFrame(animationFrameId);
+
   const width = container.clientWidth || 300;
-  const height = 280;
+  const height = 300;
 
   threeScene = new THREE.Scene();
-  threeCamera = new THREE.PerspectiveCamera(45, width / height, 0.1, 1000);
-  threeCamera.position.z = 6;
+  threeCamera = new THREE.PerspectiveCamera(40, width / height, 0.1, 1000);
+  threeCamera.position.set(0, 0, 5.2);
 
   threeRenderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
   threeRenderer.setSize(width, height);
+  threeRenderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
   container.innerHTML = '';
   container.appendChild(threeRenderer.domElement);
 
-  // Lighting
-  const ambientLight = new THREE.AmbientLight(0xffffff, 0.8);
+  // Lighting - Luxury Studio Environment Setup
+  const ambientLight = new THREE.AmbientLight(0xfff8f0, 1.2);
   threeScene.add(ambientLight);
 
-  const dirLight = new THREE.DirectionalLight(0xfff5e6, 1.2);
-  dirLight.position.set(5, 10, 7);
-  threeScene.add(dirLight);
+  const keyLight = new THREE.DirectionalLight(0xfff5e6, 2.5);
+  keyLight.position.set(5, 8, 5);
+  threeScene.add(keyLight);
 
-  // Glass Bottle Outer
-  const glassGeo = new THREE.BoxGeometry(1.6, 2.4, 1.0);
+  const fillLight = new THREE.DirectionalLight(0xC5A059, 1.8); // Golden fill
+  fillLight.position.set(-5, -2, 3);
+  threeScene.add(fillLight);
+
+  const backRimLight = new THREE.DirectionalLight(0xffffff, 2.0); // Edge refraction highlight
+  backRimLight.position.set(0, 4, -5);
+  threeScene.add(backRimLight);
+
+  bottleGroup = new THREE.Group();
+
+  // Outer Physical Glass Bottle
+  const glassGeo = new THREE.BoxGeometry(1.5, 2.2, 0.9);
   const glassMat = new THREE.MeshPhysicalMaterial({
     color: 0xffffff,
+    transmission: 0.96,       // Glass clarity
+    opacity: 1,
     transparent: true,
-    opacity: 0.35,
-    roughness: 0.1,
-    transmission: 0.9,
-    thickness: 0.5
+    roughness: 0.05,          // Polished high-gloss finish
+    ior: 1.52,                // Refraction index for heavy crystal glass
+    reflectivity: 0.9,
+    thickness: 0.35,          // Volumetric refraction thickness
+    dispersion: 0.03
   });
-  bottleMesh = new THREE.Mesh(glassGeo, glassMat);
+  const glassMesh = new THREE.Mesh(glassGeo, glassMat);
+  bottleGroup.add(glassMesh);
 
-  // Perfume Liquid Inner
-  const liquidGeo = new THREE.BoxGeometry(1.4, 1.8, 0.8);
-  const liquidMat = new THREE.MeshStandardMaterial({
-    color: liquidHex,
-    roughness: 0.2,
-    metalness: 0.1,
+  // Inner Fluid Shader (Viscous Golden Amber Oil with Fresnel Depth)
+  const oilGeo = new THREE.BoxGeometry(1.35, 1.8, 0.75);
+  
+  // Convert HEX to RGB Normalized for Shader
+  const hexToRgb = (hex) => {
+    let num = typeof hex === 'number' ? hex : parseInt(hex.toString().replace('#',''), 16);
+    return new THREE.Vector3(((num >> 16) & 255)/255, ((num >> 8) & 255)/255, (num & 255)/255);
+  };
+
+  const initialColor = hexToRgb(liquidHex);
+
+  oilMaterial = new THREE.ShaderMaterial({
+    uniforms: {
+      uTime: { value: 0 },
+      uOilColor: { value: initialColor },
+      uDeepColor: { value: new THREE.Vector3(0.24, 0.05, 0.07) } // Deep Velvet Red Core
+    },
+    vertexShader: `
+      uniform float uTime;
+      varying vec3 vNormal;
+      varying vec3 vPosition;
+      
+      void main() {
+        vNormal = normalize(normalMatrix * normal);
+        vec3 pos = position;
+        
+        // Fluid meniscus movement at top oil layer
+        if (pos.y > 0.75) {
+          pos.y += sin(pos.x * 4.0 + uTime * 2.5) * 0.025;
+          pos.z += cos(pos.x * 3.0 + uTime * 2.0) * 0.015;
+        }
+        
+        vPosition = pos;
+        gl_Position = projectionMatrix * modelViewMatrix * vec4(pos, 1.0);
+      }
+    `,
+    fragmentShader: `
+      uniform vec3 uOilColor;
+      uniform vec3 uDeepColor;
+      varying vec3 vNormal;
+      varying vec3 vPosition;
+      
+      void main() {
+        vec3 viewDir = normalize(-vPosition);
+        float fresnel = pow(1.0 - max(dot(viewDir, vNormal), 0.0), 2.2);
+        
+        // Internal depth gradient (amber glow edges with dark velvet undertones)
+        vec3 color = mix(uDeepColor, uOilColor, fresnel + 0.35);
+        color += vec3(0.25, 0.20, 0.12) * fresnel; // Liquid sheen
+        
+        gl_FragColor = vec4(color, 0.92);
+      }
+    `,
     transparent: true,
-    opacity: 0.85
+    depthWrite: false
   });
-  liquidMesh = new THREE.Mesh(liquidGeo, liquidMat);
-  liquidMesh.position.y = -0.2;
-  bottleMesh.add(liquidMesh);
 
-  // Bottle Cap
-  const capGeo = new THREE.CylinderGeometry(0.4, 0.4, 0.5, 32);
-  const capMat = new THREE.MeshStandardMaterial({ color: 0xC5A059, metalness: 0.8, roughness: 0.2 });
-  const capMesh = new THREE.Mesh(capGeo, capMat);
-  capMesh.position.y = 1.45;
-  bottleMesh.add(capMesh);
+  const oilMesh = new THREE.Mesh(oilGeo, oilMaterial);
+  oilMesh.position.y = -0.12;
+  bottleGroup.add(oilMesh);
 
-  threeScene.add(bottleMesh);
+  // Metallic Gold Spray Collar
+  const collarGeo = new THREE.CylinderGeometry(0.28, 0.28, 0.3, 32);
+  const collarMat = new THREE.MeshStandardMaterial({ color: 0xC5A059, metalness: 0.9, roughness: 0.15 });
+  const collarMesh = new THREE.Mesh(collarGeo, collarMat);
+  collarMesh.position.y = 1.22;
+  bottleGroup.add(collarMesh);
 
-  // Interactive mouse drag rotation
+  // Metallic Cap
+  const capGeo = new THREE.BoxGeometry(0.7, 0.5, 0.7);
+  const capMesh = new THREE.Mesh(capGeo, collarMat);
+  capMesh.position.y = 1.55;
+  bottleGroup.add(capMesh);
+
+  threeScene.add(bottleGroup);
+
+  // Interactive Drag Controls
   let isDragging = false;
   let prevMouse = { x: 0, y: 0 };
   container.addEventListener('mousedown', e => { isDragging = true; prevMouse = { x: e.clientX, y: e.clientY }; });
   window.addEventListener('mouseup', () => isDragging = false);
   container.addEventListener('mousemove', e => {
-    if (!isDragging || !bottleMesh) return;
+    if (!isDragging || !bottleGroup) return;
     const deltaX = e.clientX - prevMouse.x;
     const deltaY = e.clientY - prevMouse.y;
-    bottleMesh.rotation.y += deltaX * 0.01;
-    bottleMesh.rotation.x += deltaY * 0.01;
+    bottleGroup.rotation.y += deltaX * 0.01;
+    bottleGroup.rotation.x += deltaY * 0.01;
     prevMouse = { x: e.clientX, y: e.clientY };
   });
 
+  const clock = new THREE.Clock();
+
   function animate() {
-    requestAnimationFrame(animate);
-    if (!isDragging && bottleMesh) {
-      bottleMesh.rotation.y += 0.005;
+    animationFrameId = requestAnimationFrame(animate);
+    const elapsedTime = clock.getElapsedTime();
+
+    if (oilMaterial) {
+      oilMaterial.uniforms.uTime.value = elapsedTime;
     }
+
+    if (!isDragging && bottleGroup) {
+      bottleGroup.rotation.y = Math.sin(elapsedTime * 0.5) * 0.25;
+      bottleGroup.rotation.x = Math.cos(elapsedTime * 0.4) * 0.05;
+    }
+
     threeRenderer.render(threeScene, threeCamera);
   }
   animate();
 }
 
 function update3DLiquidColor(top, heart, base) {
-  if (!liquidMesh) return;
-  // Dynamic color calculation based on scent ratio
-  const r = Math.min(255, Math.floor((top * 3.5) + (base * 2)));
-  const g = Math.min(255, Math.floor((heart * 2.5) + 80));
-  const b = Math.min(255, Math.floor(base * 1.5));
-  liquidMesh.material.color.setRGB(r / 255, g / 255, b / 255);
+  if (!oilMaterial) return;
+  // Blend dynamic shader colors based on oil ratios
+  const r = Math.min(1.0, (top * 0.022) + (base * 0.012) + 0.3);
+  const g = Math.min(0.9, (heart * 0.016) + (top * 0.008) + 0.25);
+  const b = Math.min(0.6, (base * 0.006) + 0.08);
+  oilMaterial.uniforms.uOilColor.value = new THREE.Vector3(r, g, b);
 }
 
 /* ---------- Screen templates ---------- */
@@ -820,7 +855,6 @@ function updateSlider(type, val) {
   state.studio[type] = parseInt(val);
   document.getElementById(`${type}Val`).innerText = `${val}%`;
   
-  // Update Scent Accord Pyramid Visualizer
   const topBar = document.getElementById('pyramid-top');
   const heartBar = document.getElementById('pyramid-heart');
   const baseBar = document.getElementById('pyramid-base');
@@ -847,6 +881,11 @@ function saveCurrentFormula() {
     size: state.studio.size
   });
   toast(`Saved ${name} to Comparison Drawer`);
+  renderScreen();
+}
+
+function setPaymentMethod(method){
+  state.payment = method;
   renderScreen();
 }
 
@@ -933,7 +972,7 @@ function renderScreen(){
   }
   else if(state.screen==='studio'){
     const s = state.studio;
-    html = screenHeader('CUSTOM BUILDER', 'Interactive Formulation', 'Digital Scent Studio', 'Adjust fragrance oil ratios below. Notes are mapped visually to interactive 3D renderings and accord pyramids.')
+    html = screenHeader('CUSTOM BUILDER', 'Interactive Formulation', 'Digital Scent Studio', 'Adjust fragrance oil ratios below. Observe realistic refractive glass reflections and viscous oil fluid physics.')
       + `<div class="studiogrid2">
           <div class="card">
             <div class="eyebrow" style="margin-bottom:14px;">Step 1: Balance Raw Oils</div>
@@ -959,7 +998,6 @@ function renderScreen(){
               </select>
             </div>
 
-            <!-- Animated Accord Pyramid Visualizer -->
             <div class="pyramid-wrap">
               <div class="eyebrow">Scent Pyramid Volatility</div>
               <div class="pyramid-tier">
@@ -978,7 +1016,7 @@ function renderScreen(){
           </div>
 
           <div class="card" style="text-align:center;">
-            <div class="eyebrow">3D Bottle Preview</div>
+            <div class="eyebrow">3D Volumetric Fluid Canvas</div>
             <div id="bottleCanvas"></div>
             <div class="price" id="studioPrice">R${s.price}</div>
             <div style="display:flex;gap:10px;">
@@ -1127,6 +1165,44 @@ function renderScreen(){
               <label class="field-label">City</label>
               <input type="text" id="custCity" value="${state.checkout.city}">
             </div>
+
+            <!-- Expanded Payment Gateway Options -->
+            <div class="field">
+              <label class="field-label">Select Payment Method</label>
+              
+              <div class="radio-row ${state.payment==='payfast'?'selected':''}" onclick="setPaymentMethod('payfast')">
+                <div class="radiodot"></div>
+                <div>
+                  <strong>PayFast / Ozow (Credit Card, Debit &amp; Instant EFT)</strong>
+                  <div style="font-size:11.5px;color:var(--gray);margin-top:2px;">Visa, Mastercard, Capitec Pay, Ozow EFT</div>
+                </div>
+              </div>
+
+              <div class="radio-row ${state.payment==='payflex'?'selected':''}" onclick="setPaymentMethod('payflex')">
+                <div class="radiodot"></div>
+                <div>
+                  <strong>PayFlex (Buy Now, Pay Later)</strong>
+                  <div style="font-size:11.5px;color:var(--gray);margin-top:2px;">4 equal interest-free installments of R${Math.round(cartTotal()/4 || 0)}</div>
+                </div>
+              </div>
+
+              <div class="radio-row ${state.payment==='applepay'?'selected':''}" onclick="setPaymentMethod('applepay')">
+                <div class="radiodot"></div>
+                <div>
+                  <strong>Apple Pay / Google Pay</strong>
+                  <div style="font-size:11.5px;color:var(--gray);margin-top:2px;">Instant 1-tap express checkout</div>
+                </div>
+              </div>
+
+              <div class="radio-row ${state.payment==='paypal'?'selected':''}" onclick="setPaymentMethod('paypal')">
+                <div class="radiodot"></div>
+                <div>
+                  <strong>PayPal (International Express)</strong>
+                  <div style="font-size:11.5px;color:var(--gray);margin-top:2px;">Pay securely in USD / EUR equivalent</div>
+                </div>
+              </div>
+            </div>
+
             <button class="btn green" onclick="state.labStatus='formulating';renderScreen();toast('Order Placed Successfully!')">Place Order &amp; Pay R${cartTotal()}</button>
           </div>
 
