@@ -1,9 +1,8 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Velour Essence — Luxury Perfumery</title>
+<title>Velour Essence — Prototype</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -47,12 +46,8 @@
     text-align:center;
     padding:9px 16px;
     letter-spacing:0.2px;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    gap:8px;
   }
-  .promo svg{flex-shrink:0;}
+  .promo svg{vertical-align:-2px;margin-right:6px;}
 
   header.nav{
     background:#fff;
@@ -218,7 +213,6 @@
     border-radius:20px;
     margin:0 auto 14px;
   }
-  .tag svg{flex-shrink:0;}
   .tagrow{text-align:center;}
   .likebar{
     background:#F1ECE2;
@@ -318,11 +312,10 @@
   /* 3D Bottle Canvas */
   #bottleCanvas{
     width:100%;
-    height:320px;
+    height:300px;
     border-radius:12px;
     background:transparent;
     cursor:grab;
-    position:relative;
   }
 
   /* Cart / Checkout */
@@ -437,7 +430,7 @@
     cursor:pointer;transition:all .15s;text-align:center;
   }
   .moodcard:hover{border-color:var(--gold);transform:translateY(-2px);}
-  .moodcard .micon{font-size:26px;margin-bottom:8px;display:flex;align-items:center;justify-content:center;}
+  .moodcard .micon{font-size:26px;margin-bottom:8px;}
   .moodcard b{display:block;font-size:14.5px;color:var(--burgundy);margin-bottom:4px;font-family:'Cinzel',serif;}
   .moodcard span{font-size:12px;color:var(--gray);}
 
@@ -662,66 +655,56 @@ function init3DBottle(canvasId, liquidHex = 0xC5A059) {
   if (animationFrameId) cancelAnimationFrame(animationFrameId);
 
   const width = container.clientWidth || 300;
-  const height = 320;
+  const height = 300;
 
   threeScene = new THREE.Scene();
-  threeCamera = new THREE.PerspectiveCamera(38, width / height, 0.1, 1000);
-  threeCamera.position.set(0, 0.15, 5.5);
+  threeCamera = new THREE.PerspectiveCamera(40, width / height, 0.1, 1000);
+  threeCamera.position.set(0, 0, 5.2);
 
   threeRenderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
   threeRenderer.setSize(width, height);
   threeRenderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-  threeRenderer.shadowMap.enabled = true;
-  threeRenderer.shadowMap.type = THREE.PCFSoftShadowMap;
   container.innerHTML = '';
   container.appendChild(threeRenderer.domElement);
 
-  // Lighting - Premium Studio Environment with Reflections
-  const ambientLight = new THREE.AmbientLight(0xfff8f0, 0.8);
+  // Lighting - Luxury Studio Environment Setup
+  const ambientLight = new THREE.AmbientLight(0xfff8f0, 1.2);
   threeScene.add(ambientLight);
 
-  const keyLight = new THREE.DirectionalLight(0xfff5e6, 2.8);
-  keyLight.position.set(4, 7, 6);
-  keyLight.castShadow = true;
+  const keyLight = new THREE.DirectionalLight(0xfff5e6, 2.5);
+  keyLight.position.set(5, 8, 5);
   threeScene.add(keyLight);
 
-  const fillLight = new THREE.DirectionalLight(0xC5A059, 1.5);
-  fillLight.position.set(-4, -1, 4);
+  const fillLight = new THREE.DirectionalLight(0xC5A059, 1.8); // Golden fill
+  fillLight.position.set(-5, -2, 3);
   threeScene.add(fillLight);
 
-  const backRimLight = new THREE.DirectionalLight(0xffffff, 2.2);
-  backRimLight.position.set(0, 3, -6);
+  const backRimLight = new THREE.DirectionalLight(0xffffff, 2.0); // Edge refraction highlight
+  backRimLight.position.set(0, 4, -5);
   threeScene.add(backRimLight);
-
-  const topLight = new THREE.DirectionalLight(0xE4CFA0, 1.0);
-  topLight.position.set(0, 6, 0);
-  threeScene.add(topLight);
 
   bottleGroup = new THREE.Group();
 
-  // Outer Physical Glass Bottle - Refined Shape
-  const glassGeo = new THREE.BoxGeometry(1.5, 2.3, 0.9);
+  // Outer Physical Glass Bottle
+  const glassGeo = new THREE.BoxGeometry(1.5, 2.2, 0.9);
   const glassMat = new THREE.MeshPhysicalMaterial({
     color: 0xffffff,
-    transmission: 0.97,
+    transmission: 0.96,       // Glass clarity
     opacity: 1,
     transparent: true,
-    roughness: 0.03,
-    metalness: 0.0,
-    ior: 1.53,
-    reflectivity: 0.95,
-    thickness: 0.4,
-    dispersion: 0.04,
-    clearcoat: 0.1,
-    clearcoatRoughness: 0.2
+    roughness: 0.05,          // Polished high-gloss finish
+    ior: 1.52,                // Refraction index for heavy crystal glass
+    reflectivity: 0.9,
+    thickness: 0.35,          // Volumetric refraction thickness
+    dispersion: 0.03
   });
   const glassMesh = new THREE.Mesh(glassGeo, glassMat);
-  glassMesh.castShadow = true;
   bottleGroup.add(glassMesh);
 
-  // Inner Fluid Shader - Volumetric Golden Amber with Fresnel
-  const oilGeo = new THREE.BoxGeometry(1.32, 1.85, 0.72);
+  // Inner Fluid Shader (Viscous Golden Amber Oil with Fresnel Depth)
+  const oilGeo = new THREE.BoxGeometry(1.35, 1.8, 0.75);
   
+  // Convert HEX to RGB Normalized for Shader
   const hexToRgb = (hex) => {
     let num = typeof hex === 'number' ? hex : parseInt(hex.toString().replace('#',''), 16);
     return new THREE.Vector3(((num >> 16) & 255)/255, ((num >> 8) & 255)/255, (num & 255)/255);
@@ -733,7 +716,7 @@ function init3DBottle(canvasId, liquidHex = 0xC5A059) {
     uniforms: {
       uTime: { value: 0 },
       uOilColor: { value: initialColor },
-      uDeepColor: { value: new THREE.Vector3(0.20, 0.04, 0.06) }
+      uDeepColor: { value: new THREE.Vector3(0.24, 0.05, 0.07) } // Deep Velvet Red Core
     },
     vertexShader: `
       uniform float uTime;
@@ -744,5 +727,505 @@ function init3DBottle(canvasId, liquidHex = 0xC5A059) {
         vNormal = normalize(normalMatrix * normal);
         vec3 pos = position;
         
+        // Fluid meniscus movement at top oil layer
         if (pos.y > 0.75) {
-          pos.y += sin(pos.x * 5.0 + uTime * 2.0) * 0.
+          pos.y += sin(pos.x * 4.0 + uTime * 2.5) * 0.025;
+          pos.z += cos(pos.x * 3.0 + uTime * 2.0) * 0.015;
+        }
+        
+        vPosition = pos;
+        gl_Position = projectionMatrix * modelViewMatrix * vec4(pos, 1.0);
+      }
+    `,
+    fragmentShader: `
+      uniform vec3 uOilColor;
+      uniform vec3 uDeepColor;
+      varying vec3 vNormal;
+      varying vec3 vPosition;
+      
+      void main() {
+        vec3 viewDir = normalize(-vPosition);
+        float fresnel = pow(1.0 - max(dot(viewDir, vNormal), 0.0), 2.2);
+        
+        // Internal depth gradient (amber glow edges with dark velvet undertones)
+        vec3 color = mix(uDeepColor, uOilColor, fresnel + 0.35);
+        color += vec3(0.25, 0.20, 0.12) * fresnel; // Liquid sheen
+        
+        gl_FragColor = vec4(color, 0.92);
+      }
+    `,
+    transparent: true,
+    depthWrite: false
+  });
+
+  const oilMesh = new THREE.Mesh(oilGeo, oilMaterial);
+  oilMesh.position.y = -0.12;
+  bottleGroup.add(oilMesh);
+
+  // Metallic Gold Spray Collar
+  const collarGeo = new THREE.CylinderGeometry(0.28, 0.28, 0.3, 32);
+  const collarMat = new THREE.MeshStandardMaterial({ color: 0xC5A059, metalness: 0.9, roughness: 0.15 });
+  const collarMesh = new THREE.Mesh(collarGeo, collarMat);
+  collarMesh.position.y = 1.22;
+  bottleGroup.add(collarMesh);
+
+  // Metallic Cap
+  const capGeo = new THREE.BoxGeometry(0.7, 0.5, 0.7);
+  const capMesh = new THREE.Mesh(capGeo, collarMat);
+  capMesh.position.y = 1.55;
+  bottleGroup.add(capMesh);
+
+  threeScene.add(bottleGroup);
+
+  // Interactive Drag Controls
+  let isDragging = false;
+  let prevMouse = { x: 0, y: 0 };
+  container.addEventListener('mousedown', e => { isDragging = true; prevMouse = { x: e.clientX, y: e.clientY }; });
+  window.addEventListener('mouseup', () => isDragging = false);
+  container.addEventListener('mousemove', e => {
+    if (!isDragging || !bottleGroup) return;
+    const deltaX = e.clientX - prevMouse.x;
+    const deltaY = e.clientY - prevMouse.y;
+    bottleGroup.rotation.y += deltaX * 0.01;
+    bottleGroup.rotation.x += deltaY * 0.01;
+    prevMouse = { x: e.clientX, y: e.clientY };
+  });
+
+  const clock = new THREE.Clock();
+
+  function animate() {
+    animationFrameId = requestAnimationFrame(animate);
+    const elapsedTime = clock.getElapsedTime();
+
+    if (oilMaterial) {
+      oilMaterial.uniforms.uTime.value = elapsedTime;
+    }
+
+    if (!isDragging && bottleGroup) {
+      bottleGroup.rotation.y = Math.sin(elapsedTime * 0.5) * 0.25;
+      bottleGroup.rotation.x = Math.cos(elapsedTime * 0.4) * 0.05;
+    }
+
+    threeRenderer.render(threeScene, threeCamera);
+  }
+  animate();
+}
+
+function update3DLiquidColor(top, heart, base) {
+  if (!oilMaterial) return;
+  // Blend dynamic shader colors based on oil ratios
+  const r = Math.min(1.0, (top * 0.022) + (base * 0.012) + 0.3);
+  const g = Math.min(0.9, (heart * 0.016) + (top * 0.008) + 0.25);
+  const b = Math.min(0.6, (base * 0.006) + 0.08);
+  oilMaterial.uniforms.uOilColor.value = new THREE.Vector3(r, g, b);
+}
+
+/* ---------- Screen templates ---------- */
+function screenHeader(kicker, eyebrow, title, sub){
+  return `
+    <span class="kicker">${kicker}</span>
+    <div class="eyebrow">${eyebrow}</div>
+    <h1>${title}</h1>
+    <p class="subtext">${sub}</p>
+  `;
+}
+
+function productCard(title, tag, tagIcon, likeText, price, key){
+  return `
+  <div class="card">
+    <h3>${title}</h3>
+    <div class="tagrow"><span class="tag">${tagIcon} ${tag}</span></div>
+    <div class="likebar">If you like: ${likeText}</div>
+    <div class="price">R${price}</div>
+    <button class="btn" onclick="addToCart({key:'${key}', title:'${title}', sub:'+ Includes Free 2ml Mini Sample', price:${price}})">Add to Cart</button>
+  </div>`;
+}
+
+function tierCard(name, sub, price, featured=false){
+  return `
+    <div class="tiercard ${featured?'featured':''}" onclick="go('studio')">
+      <div class="tiername">${name}</div>
+      <div class="tierprice">R${price}</div>
+      <div class="tiersub">${sub}</div>
+    </div>
+  `;
+}
+
+function updateSlider(type, val) {
+  state.studio[type] = parseInt(val);
+  document.getElementById(`${type}Val`).innerText = `${val}%`;
+  
+  const topBar = document.getElementById('pyramid-top');
+  const heartBar = document.getElementById('pyramid-heart');
+  const baseBar = document.getElementById('pyramid-base');
+  if(topBar) topBar.style.width = `${state.studio.top}%`;
+  if(heartBar) heartBar.style.width = `${state.studio.heart}%`;
+  if(baseBar) baseBar.style.width = `${state.studio.base}%`;
+
+  update3DLiquidColor(state.studio.top, state.studio.heart, state.studio.base);
+}
+
+function updateSize(val) {
+  state.studio.size = val;
+  state.studio.price = SIZE_PRICES[val];
+  document.getElementById('studioPrice').innerText = `R${state.studio.price}`;
+}
+
+function saveCurrentFormula() {
+  const name = `Bespoke Blend #${state.savedFormulas.length + 1}`;
+  state.savedFormulas.push({
+    name,
+    top: state.studio.top,
+    heart: state.studio.heart,
+    base: state.studio.base,
+    size: state.studio.size
+  });
+  toast(`Saved ${name} to Comparison Drawer`);
+  renderScreen();
+}
+
+function setPaymentMethod(method){
+  state.payment = method;
+  renderScreen();
+}
+
+function renderScreen(){
+  const main = document.getElementById('main');
+  let html = '';
+
+  if(state.screen==='home'){
+    html = `
+      <span class="kicker">HOME</span>
+      <div class="hero">
+        <div>
+          <div class="eyebrow">Welcome to Velour Essence</div>
+          <h1>Luxury fragrance, without the retail markup.</h1>
+          <p class="subtext">Master-blended perfumes inspired by the scents you already love. Every bottle ships with a free 2ml sample and a risk-free 100% refund guarantee.</p>
+          <div class="herobtns">
+            <button class="btn" onclick="go('house')">Shop the Collection</button>
+            <button class="btn ghost" onclick="go('matcher')">Find My Scent Match</button>
+          </div>
+        </div>
+        <div class="heroart">
+          <svg viewBox="0 0 300 260" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <radialGradient id="stageGrad" cx="50%" cy="60%" r="75%">
+                <stop offset="0%" stop-color="#F4EAD8"/>
+                <stop offset="100%" stop-color="#DCCFB6"/>
+              </radialGradient>
+              <linearGradient id="liquidGrad" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#C5A059"/>
+                <stop offset="100%" stop-color="#3D0C13"/>
+              </linearGradient>
+            </defs>
+            <rect width="300" height="260" rx="16" fill="url(#stageGrad)"/>
+            <path d="M46 205Q58 150 42 118" stroke="#9C8656" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+            <circle cx="42" cy="118" r="5" fill="#C5A059"/>
+            <circle cx="52" cy="132" r="3.5" fill="#C5A059" opacity="0.7"/>
+            <ellipse cx="152" cy="216" rx="72" ry="11" fill="rgba(61,12,19,0.14)"/>
+            <rect x="112" y="90" width="80" height="120" rx="14" fill="url(#liquidGrad)" stroke="#3D0C13" stroke-width="1.5"/>
+            <rect x="124" y="100" width="9" height="100" rx="4.5" fill="rgba(255,255,255,0.22)"/>
+            <rect x="142" y="70" width="20" height="24" fill="url(#liquidGrad)" stroke="#3D0C13" stroke-width="1.2"/>
+            <rect x="134" y="52" width="36" height="22" rx="4" fill="#C5A059" stroke="#3D0C13" stroke-width="1.2"/>
+            <rect x="124" y="128" width="56" height="42" rx="3" fill="#FAF7F2" stroke="#C5A059" stroke-width="1"/>
+            <text x="152" y="146" text-anchor="middle" font-family="Cinzel, serif" font-size="6.5" fill="#3D0C13" letter-spacing="1.5">VELOUR</text>
+            <text x="152" y="157" text-anchor="middle" font-family="Cinzel, serif" font-size="6.5" fill="#3D0C13" letter-spacing="1.5">ESSENCE</text>
+          </svg>
+        </div>
+      </div>
+
+      <div class="guarantee-card">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#3D0C13" stroke-width="1.8"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+        <div>
+          <strong>Unsure how it smells online? We've got you covered:</strong><br>
+          1. Start with a Discovery Kit (R180) &amp; get 100% back as a voucher.<br>
+          2. Or order a full bottle &amp; test the included 2ml mini sample first!
+        </div>
+      </div>
+
+      <div class="eyebrow">Choose a size</div>
+      <div class="tiergrid">
+        ${tierCard('30ml','Pocket Luxury',300)}
+        ${tierCard('50ml','Flagship Bottle',400,true)}
+        ${tierCard('100ml','Statement',500)}
+      </div>
+
+      <div class="eyebrow">Shop by mood</div>
+      <h1 style="font-size:22px;margin-bottom:18px;">Where do you want to start?</h1>
+      <div class="moodgrid">
+        <div class="moodcard" onclick="go('house')">
+          <div class="micon">🌙</div>
+          <b>The House Collection</b>
+          <span>Ready-to-wear signature scents</span>
+        </div>
+        <div class="moodcard" onclick="go('studio')">
+          <div class="micon">🧪</div>
+          <b>The Studio</b>
+          <span>Blend top, heart & base oils online</span>
+        </div>
+        <div class="moodcard" onclick="go('discovery')">
+          <div class="micon">📦</div>
+          <b>Discovery Kits</b>
+          <span>Sample first, refunded as a voucher</span>
+        </div>
+      </div>`;
+  }
+  else if(state.screen==='studio'){
+    const s = state.studio;
+    html = screenHeader('CUSTOM BUILDER', 'Interactive Formulation', 'Digital Scent Studio', 'Adjust fragrance oil ratios below. Observe realistic refractive glass reflections and viscous oil fluid physics.')
+      + `<div class="studiogrid2">
+          <div class="card">
+            <div class="eyebrow" style="margin-bottom:14px;">Step 1: Balance Raw Oils</div>
+            <div class="slidergroup">
+              <div class="sliderlabel"><span>Cape Citrus (Top)</span><span id="topVal">${s.top}%</span></div>
+              <input type="range" min="10" max="60" value="${s.top}" oninput="updateSlider('top', this.value)">
+            </div>
+            <div class="slidergroup">
+              <div class="sliderlabel"><span>Midnight Jasmine (Heart)</span><span id="heartVal">${s.heart}%</span></div>
+              <input type="range" min="10" max="60" value="${s.heart}" oninput="updateSlider('heart', this.value)">
+            </div>
+            <div class="slidergroup">
+              <div class="sliderlabel"><span>Amber &amp; Cedar (Base)</span><span id="baseVal">${s.base}%</span></div>
+              <input type="range" min="10" max="60" value="${s.base}" oninput="updateSlider('base', this.value)">
+            </div>
+            
+            <div style="margin-top:20px;">
+              <label class="field-label">Step 2: Choose Size</label>
+              <select class="input-select" onchange="updateSize(this.value)">
+                <option value="30ml" ${s.size==='30ml'?'selected':''}>30ml Eau de Parfum (R300)</option>
+                <option value="50ml" ${s.size==='50ml'?'selected':''}>50ml Eau de Parfum (R400)</option>
+                <option value="100ml" ${s.size==='100ml'?'selected':''}>100ml Eau de Parfum (R500)</option>
+              </select>
+            </div>
+
+            <div class="pyramid-wrap">
+              <div class="eyebrow">Scent Pyramid Volatility</div>
+              <div class="pyramid-tier">
+                <div class="pyramid-title"><span>Top Accord (0-30 mins)</span><span>${s.top}%</span></div>
+                <div class="pyramid-bar-bg"><div id="pyramid-top" class="pyramid-bar-fill" style="width:${s.top}%;"></div></div>
+              </div>
+              <div class="pyramid-tier">
+                <div class="pyramid-title"><span>Heart Accord (30m - 4hrs)</span><span>${s.heart}%</span></div>
+                <div class="pyramid-bar-bg"><div id="pyramid-heart" class="pyramid-bar-fill" style="width:${s.heart}%;"></div></div>
+              </div>
+              <div class="pyramid-tier">
+                <div class="pyramid-title"><span>Base Accord (4hrs+)</span><span>${s.base}%</span></div>
+                <div class="pyramid-bar-bg"><div id="pyramid-base" class="pyramid-bar-fill" style="width:${s.base}%;"></div></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card" style="text-align:center;">
+            <div class="eyebrow">3D Volumetric Fluid Canvas</div>
+            <div id="bottleCanvas"></div>
+            <div class="price" id="studioPrice">R${s.price}</div>
+            <div style="display:flex;gap:10px;">
+              <button class="btn ghost" onclick="saveCurrentFormula()">Save Formula</button>
+              <button class="btn" onclick="addToCart({key:'custom', title:'Custom Perfume Blend', sub:'${s.size} • Top:${s.top}% Heart:${s.heart}% Base:${s.base}%', price:${s.price}})">Add Custom Bottle to Cart</button>
+            </div>
+          </div>
+        </div>
+
+        ${state.savedFormulas.length > 0 ? `
+          <div class="saved-formulas">
+            <div class="eyebrow">Formula Comparison Drawer</div>
+            ${state.savedFormulas.map(f => `
+              <div class="saved-row">
+                <b>${f.name} (${f.size})</b>
+                <span>Top: ${f.top}% | Heart: ${f.heart}% | Base: ${f.base}%</span>
+              </div>
+            `).join('')}
+          </div>
+        ` : ''}`;
+
+    setTimeout(() => init3DBottle('bottleCanvas'), 50);
+  }
+  else if(state.screen==='personalize'){
+    html = screenHeader('ENGRAVING', 'Custom Label Atelier', 'Personalize Your Bottle', 'Add custom text to your label or bottle face.')
+      + `<div class="split">
+          <div class="card">
+            <div class="field">
+              <label class="field-label">Fragrance Title</label>
+              <input type="text" value="${state.fragranceTitle}" maxlength="20" oninput="state.fragranceTitle=this.value.toUpperCase();document.getElementById('lblTitle').innerText=state.fragranceTitle;">
+            </div>
+            <div class="field">
+              <label class="field-label">Subtitle / Year</label>
+              <input type="text" value="${state.fragranceSub}" maxlength="30" oninput="state.fragranceSub=this.value.toUpperCase();document.getElementById('lblSub').innerText=state.fragranceSub;">
+            </div>
+            <button class="btn" onclick="toast('Saved Custom Engraving!')">Save Personalization</button>
+          </div>
+
+          <div class="preview-wrap">
+            <div class="bottlecap"></div>
+            <div class="label">
+              <div class="lv">VELOUR ESSENCE</div>
+              <div class="lt" id="lblTitle">${state.fragranceTitle}</div>
+              <div class="ls" id="lblSub">${state.fragranceSub}</div>
+            </div>
+          </div>
+        </div>`;
+  }
+  else if(state.screen==='matcher'){
+    const q = QUIZ[state.quizStep];
+    if(!q){
+      const ref = state.quizAnswers['ref'] || 'Tom Ford Oud Wood';
+      const res = MATCH_RESULTS[ref] || MATCH_RESULTS['Tom Ford Oud Wood'];
+      html = screenHeader('QUIZ RESULT', 'Sensory Matching Engine', 'Your Scent Match', 'Based on your answers, here is your ideal signature blend:')
+        + `<div class="resultcard">
+            <div class="rlabel">${res.tag}</div>
+            <h3>${res.name}</h3>
+            <p>Formulated matching your preference for ${state.quizAnswers['mood'] || 'luxury'}.</p>
+            <div class="resultbtns">
+              <button class="btn" onclick="addToCart({key:'${res.key}', title:'${res.name}', sub:'Matched Signature Scent', price:400})">Add to Cart (R400)</button>
+              <button class="btn ghost" onclick="state.studio.top=${res.formula.top};state.studio.heart=${res.formula.heart};state.studio.base=${res.formula.base};go('studio');">Customize in Studio</button>
+            </div>
+          </div>`;
+    } else {
+      html = screenHeader('QUIZ', 'Interactive Matcher', 'Find Your Scent', 'Answer 3 simple questions to discover your ideal olfactory match.')
+        + `<div class="quizwrap card">
+            <div class="quizprogress">
+              ${QUIZ.map((_,i)=>`<div class="seg ${i<=state.quizStep?'done':''}"></div>`).join('')}
+            </div>
+            <div class="quizq">${q.q}</div>
+            ${q.options.map(opt=>`
+              <button class="quizopt" onclick="state.quizAnswers['${q.key}']='${opt}';state.quizStep++;renderScreen();">${opt}</button>
+            `).join('')}
+          </div>`;
+    }
+  }
+  else if(state.screen==='house'){
+    html = screenHeader('COLLECTION', 'Curated Perfumery', 'The House Collection', 'Handcrafted, long-lasting signature fragrances.')
+      + `<div class="grid grid-3">
+          ${productCard('Velour Noir', 'Late Night • Espresso', '🌙', 'Tom Ford Oud Wood', 400, 'noir')}
+          ${productCard('Golden Aura', 'Sunset • Champagne', '✨', 'Baccarat Rouge 540', 400, 'aura')}
+          ${productCard('Citrus Bloom', 'Morning • Coastal', '🍊', 'Chanel Chance Eau Fraîche', 400, 'bloom')}
+        </div>`;
+  }
+  else if(state.screen==='discovery'){
+    html = screenHeader('SAMPLES', '100% Refundable', 'Discovery Kits', 'Sample luxury scents at home. Receive the full kit cost back as a store voucher.')
+      + `<div class="grid grid-2">
+          <div class="card">
+            <h3>House Discovery Set</h3>
+            <div class="price">R180</div>
+            <div class="voucherbar">Includes R180 voucher inside! (Kit becomes FREE)</div>
+            <button class="btn" onclick="addToCart({key:'kit-house', title:'House Discovery Set', sub:'Includes R180 Voucher', price:180})">Add Kit to Cart</button>
+          </div>
+          <div class="card">
+            <h3>Atelier Custom Sample Pack</h3>
+            <div class="price">R220</div>
+            <div class="voucherbar">Includes R220 voucher inside! (Kit becomes FREE)</div>
+            <button class="btn" onclick="addToCart({key:'kit-custom', title:'Atelier Sample Pack', sub:'Includes R220 Voucher', price:220})">Add Kit to Cart</button>
+          </div>
+        </div>`;
+  }
+  else if(state.screen==='cart'){
+    html = screenHeader('CART', 'Review Items', 'Your Shopping Cart', 'All orders include free samples and risk-free returns.')
+      + (state.cart.length === 0 ? `<div class="card" style="text-align:center;padding:40px;">Your cart is empty.<br><br><button class="btn" style="width:auto;margin:0 auto;" onclick="go('house')">Browse Perfumes</button></div>` :
+        `<div class="split">
+          <div class="cartlist">
+            ${state.cart.map((item, idx) => `
+              <div class="cartitem">
+                <div class="cicon">🧪</div>
+                <div>
+                  <div class="cititle">${item.title}</div>
+                  <div class="cisub">${item.sub}</div>
+                  <div class="qtystepper">
+                    <button class="qtybtn" onclick="updateQty(${idx}, -1)">-</button>
+                    <span class="qtyval">${item.qty}</span>
+                    <button class="qtybtn" onclick="updateQty(${idx}, 1)">+</button>
+                  </div>
+                </div>
+                <div class="ciprice">
+                  R${item.price * item.qty}
+                  <button class="removebtn" onclick="removeFromCart(${idx})">&times;</button>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+          <div class="summarycard">
+            <div class="summarylabel">Order Summary</div>
+            <div class="totalrow"><span>Total:</span><span>R${cartTotal()}</span></div>
+            <button class="btn" onclick="go('checkout')">Proceed to Checkout</button>
+          </div>
+        </div>`);
+  }
+  else if(state.screen==='checkout'){
+    html = screenHeader('CHECKOUT', 'Secure Order', 'Delivery & Payment', 'Complete your details to send your order directly to our formulation lab.')
+      + `<div class="split">
+          <div class="card">
+            <div class="field">
+              <label class="field-label">Full Name</label>
+              <input type="text" id="custName" value="${state.checkout.name}" placeholder="Anas Smith">
+            </div>
+            <div class="field">
+              <label class="field-label">Street Address</label>
+              <input type="text" id="custAddr" value="${state.checkout.address}" placeholder="123 Long Street">
+            </div>
+            <div class="field">
+              <label class="field-label">City</label>
+              <input type="text" id="custCity" value="${state.checkout.city}">
+            </div>
+
+            <!-- Expanded Payment Gateway Options -->
+            <div class="field">
+              <label class="field-label">Select Payment Method</label>
+              
+              <div class="radio-row ${state.payment==='payfast'?'selected':''}" onclick="setPaymentMethod('payfast')">
+                <div class="radiodot"></div>
+                <div>
+                  <strong>PayFast / Ozow (Credit Card, Debit &amp; Instant EFT)</strong>
+                  <div style="font-size:11.5px;color:var(--gray);margin-top:2px;">Visa, Mastercard, Capitec Pay, Ozow EFT</div>
+                </div>
+              </div>
+
+              <div class="radio-row ${state.payment==='payflex'?'selected':''}" onclick="setPaymentMethod('payflex')">
+                <div class="radiodot"></div>
+                <div>
+                  <strong>PayFlex (Buy Now, Pay Later)</strong>
+                  <div style="font-size:11.5px;color:var(--gray);margin-top:2px;">4 equal interest-free installments of R${Math.round(cartTotal()/4 || 0)}</div>
+                </div>
+              </div>
+
+              <div class="radio-row ${state.payment==='applepay'?'selected':''}" onclick="setPaymentMethod('applepay')">
+                <div class="radiodot"></div>
+                <div>
+                  <strong>Apple Pay / Google Pay</strong>
+                  <div style="font-size:11.5px;color:var(--gray);margin-top:2px;">Instant 1-tap express checkout</div>
+                </div>
+              </div>
+
+              <div class="radio-row ${state.payment==='paypal'?'selected':''}" onclick="setPaymentMethod('paypal')">
+                <div class="radiodot"></div>
+                <div>
+                  <strong>PayPal (International Express)</strong>
+                  <div style="font-size:11.5px;color:var(--gray);margin-top:2px;">Pay securely in USD / EUR equivalent</div>
+                </div>
+              </div>
+            </div>
+
+            <button class="btn green" onclick="state.labStatus='formulating';renderScreen();toast('Order Placed Successfully!')">Place Order &amp; Pay R${cartTotal()}</button>
+          </div>
+
+          <div class="card">
+            <div class="eyebrow">Real-time Lab Tracker</div>
+            <div style="margin-top:16px;">
+              <div class="tracker-step"><div class="tracker-dot ${state.labStatus!=='idle'?'done':'active'}"></div><span>Order Received</span></div>
+              <div class="tracker-step"><div class="tracker-dot ${state.labStatus==='formulating'?'active':''}"></div><span>Formulating Oils in Lab</span></div>
+              <div class="tracker-step"><div class="tracker-dot"></div><span>Bottling &amp; Custom Engraving</span></div>
+              <div class="tracker-step"><div class="tracker-dot"></div><span>Dispatched via Courier</span></div>
+            </div>
+          </div>
+        </div>`;
+  }
+
+  main.innerHTML = html;
+  main.classList.remove('anim');
+  void main.offsetWidth;
+  main.classList.add('anim');
+}
+
+// Initial Kickoff
+renderNav();
+renderScreen();
+</script>
+</body>
