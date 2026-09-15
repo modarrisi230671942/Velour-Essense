@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -531,7 +532,6 @@ const NAV = [
   {id:'discovery', label:'6: Discovery'},
   {id:'cart', label:'7: Cart', cart:true},
   {id:'checkout', label:'8: Checkout'},
-  {id:'login', label:'Login'},
 ];
 
 let state = {
@@ -1204,7 +1204,7 @@ function renderScreen(){
               </div>
             </div>
 
-           <button class="btn green" onclick="placeOrder()">Place Order &amp; Pay R${cartTotal()}</button>
+            <button class="btn green" onclick="state.labStatus='formulating';renderScreen();toast('Order Placed Successfully!')">Place Order &amp; Pay R${cartTotal()}</button>
           </div>
 
           <div class="card">
@@ -1228,65 +1228,5 @@ function renderScreen(){
 // Initial Kickoff
 renderNav();
 renderScreen();
-</script>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="backend.js"></script>
-<script>
-  // your existing <script> block with NAV, state, renderScreen(), etc. goes here
-  else if(state.screen==='login'){
-  html = `
-    <div class="card" style="max-width:420px;margin:0 auto;">
-      <h3>Login / Create Account</h3>
-      <div class="field"><label class="field-label">Email</label>
-        <input type="text" id="authEmail" placeholder="you@example.com"></div>
-      <div class="field"><label class="field-label">Password</label>
-        <input type="text" id="authPassword" placeholder="••••••••"></div>
-      <div class="field"><label class="field-label">Full Name (only for signup)</label>
-        <input type="text" id="authName" placeholder="Anas Pansari"></div>
-      <button class="btn" onclick="handleLogin()">Log In</button>
-      <button class="btn ghost" style="margin-top:10px;" onclick="handleSignup()">Create Account</button>
-      <div id="authMsg" style="margin-top:10px;color:var(--gray);font-size:13px;"></div>
-    </div>`;
-}
-async function handleLogin(){
-  const email = document.getElementById('authEmail').value;
-  const password = document.getElementById('authPassword').value;
-  const res = await Backend.signIn(email, password);
-  document.getElementById('authMsg').innerText = res.ok ? `Welcome back!` : res.message;
-  if(res.ok) go('home');
-}
-
-async function handleSignup(){
-  const email = document.getElementById('authEmail').value;
-  const password = document.getElementById('authPassword').value;
-  const name = document.getElementById('authName').value;
-  const res = await Backend.signUp(email, password, name);
-  document.getElementById('authMsg').innerText = res.ok
-    ? `Account created! Check your email to confirm, then log in.`
-    : res.message;
-}
-async function placeOrder(){
-  const checkoutInfo = {
-    name: document.getElementById('custName').value,
-    address: document.getElementById('custAddr').value,
-    city: document.getElementById('custCity').value,
-    paymentMethod: state.payment,
-    total: cartTotal()
-  };
-
-  toast('Placing your order...');
-  const result = await Backend.placeOrder(state.cart, checkoutInfo);
-  if(!result.ok){ toast('Error: ' + result.message); return; }
-
-  toast('Processing payment...');
-  await Backend.simulatePayment(result.orderId);
-
-  state.labStatus = 'formulating';
-  state.lastOrderId = result.orderId;
-  state.cart = [];              // empty the cart after a successful order
-  renderNav();
-  renderScreen();
-  toast('Order Placed Successfully!');
-}
 </script>
 </body>
