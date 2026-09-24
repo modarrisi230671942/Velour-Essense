@@ -1,0 +1,1958 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>VELOUR ESSENCE — Luxury Fragrance Atelier & Real-Time Cloud Lab</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<!-- Supabase 24/7 Cloud Database Client -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<!-- EmailJS Client-Side Email (used to send order confirmation emails from a static site) -->
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<style>
+  :root{
+    --burgundy:#3D0C13;
+    --burgundy-dark:#2A080D;
+    --burgundy-light:#591720;
+    --gold:#C5A059;
+    --gold-light:#E4CFA0;
+    --gold-foil:linear-gradient(135deg, #ECC880 0%, #C5A059 50%, #9C7838 100%);
+    --silk:#F4EAD8;
+    --cream:#FAF7F2;
+    --ink:#2A2018;
+    --gray:#7A7168;
+    --line:#E8E0D0;
+    --green:#1E8E3E;
+    --green-bg:#EAF6ED;
+    --green-text:#1E6B33;
+    --red-bg:#FBEAEA;
+    --red-text:#B3261E;
+    --blue-bg:#E8F0FE;
+    --blue-text:#1967D2;
+    --shadow-sm:0 2px 8px rgba(61,12,19,0.04);
+    --shadow-md:0 8px 24px rgba(61,12,19,0.07);
+    --shadow-lg:0 16px 36px rgba(61,12,19,0.12);
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    font-family:'Plus Jakarta Sans',sans-serif;
+    background: linear-gradient(180deg,#EBE4D6, #DDD3BF);
+    min-height:100vh;
+    color:var(--ink);
+  }
+  .frame{
+    width:100%;
+    min-height:100vh;
+    background:var(--cream);
+  }
+  .promo{
+    background:var(--gold);
+    color:var(--burgundy);
+    font-size:12.5px;
+    font-weight:700;
+    text-align:center;
+    padding:8px 16px;
+    letter-spacing:0.2px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:8px;
+  }
+  .promo svg{vertical-align:-2px;}
+
+  header.nav{
+    background:#fff;
+    border-bottom:1px solid var(--line);
+    display:flex;
+    flex-wrap:wrap;
+    align-items:center;
+    gap:14px 20px;
+    padding:14px 32px;
+    position:sticky;
+    top:0;
+    z-index:100;
+    box-shadow:var(--shadow-sm);
+  }
+  .brandmark{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    flex-shrink:0;
+    cursor:pointer;
+  }
+  .crest{
+    width:44px;height:44px;border-radius:50%;
+    border:2px solid var(--gold);
+    display:flex;align-items:center;justify-content:center;
+    color:var(--burgundy);
+    background:#fff;
+    transition:transform .2s;
+  }
+  .brandmark:hover .crest{transform:rotate(12deg);}
+  .wordmark{
+    font-family:'Cinzel',serif;
+    font-weight:700;
+    font-size:17px;
+    line-height:1.1;
+    color:var(--burgundy);
+  }
+  .tagline{
+    font-size:9.5px;
+    letter-spacing:1.2px;
+    color:var(--gold);
+    font-weight:700;
+    text-transform:uppercase;
+    margin-top:2px;
+  }
+  .navwrap{
+    flex:1;
+    min-width:0;
+    display:flex;
+    align-items:center;
+    gap:8px;
+  }
+  .navscroll{
+    display:flex;
+    flex:1;
+    min-width:0;
+    gap:8px;
+    overflow-x:auto;
+    scrollbar-width:thin;
+    padding-bottom:4px;
+  }
+  .navscroll::-webkit-scrollbar{height:5px;}
+  .navscroll::-webkit-scrollbar-thumb{background:#c9bfa8;border-radius:10px;}
+  .pill{
+    flex-shrink:0;
+    border:1px solid var(--line);
+    background:#fff;
+    color:var(--ink);
+    font-size:12.5px;
+    font-weight:600;
+    padding:8px 14px;
+    border-radius:20px;
+    cursor:pointer;
+    white-space:nowrap;
+    display:flex;
+    align-items:center;
+    gap:6px;
+    transition:all .15s ease;
+  }
+  .pill:hover{border-color:var(--gold);background:var(--silk);}
+  .pill.active{
+    background:var(--burgundy);
+    color:#fff;
+    border-color:var(--burgundy);
+  }
+  .badge{
+    background:var(--gold);
+    color:var(--burgundy);
+    font-size:10.5px;
+    font-weight:800;
+    width:18px;height:18px;
+    border-radius:50%;
+    display:flex;align-items:center;justify-content:center;
+  }
+  .pill.active .badge{background:#fff;color:var(--burgundy);}
+  .navarrow{
+    background:none;border:none;color:var(--gray);cursor:pointer;font-size:16px;
+    flex-shrink:0;
+  }
+  .db-indicator{
+    display:inline-flex;align-items:center;gap:6px;
+    font-size:11px;font-weight:700;
+    padding:5px 12px;border-radius:14px;
+    background:var(--silk);color:var(--burgundy);
+    border:1px solid var(--gold);
+    cursor:pointer;
+    transition:all .2s;
+  }
+  .db-indicator:hover{background:#ecdcb8;}
+  .db-dot{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 6px var(--green);animation:pulse 2s infinite;}
+  @keyframes pulse{
+    0%{transform:scale(0.9);opacity:0.8;}
+    50%{transform:scale(1.3);opacity:1;}
+    100%{transform:scale(0.9);opacity:0.8;}
+  }
+
+  main{
+    padding:36px 40px 60px;
+    min-height:540px;
+    max-width:1240px;
+    margin:0 auto;
+  }
+  main.anim{animation:screenIn .28s ease;}
+  @keyframes screenIn{
+    from{opacity:0;transform:translateY(6px);}
+    to{opacity:1;transform:translateY(0);}
+  }
+  @media (prefers-reduced-motion: reduce){
+    main{animation:none;}
+    .moodcard, .tiercard{transition:none;}
+  }
+  button:focus-visible, input:focus-visible, select:focus-visible, .pill:focus-visible, .quizopt:focus-visible{
+    outline:2px solid var(--gold);
+    outline-offset:2px;
+  }
+  .kicker{
+    display:inline-block;
+    background:var(--burgundy);
+    color:#fff;
+    font-size:11px;
+    font-weight:700;
+    letter-spacing:0.4px;
+    padding:6px 12px;
+    border-radius:20px;
+    margin-bottom:14px;
+  }
+  .eyebrow{
+    color:var(--gold);
+    font-size:12px;
+    font-weight:700;
+    letter-spacing:1px;
+    text-transform:uppercase;
+    margin-bottom:6px;
+  }
+  h1{
+    font-family:'Cinzel',serif;
+    color:var(--burgundy);
+    font-size:28px;
+    margin:0 0 8px;
+    line-height:1.2;
+  }
+  .subtext{color:var(--gray);font-size:14.5px;margin:0 0 28px;max-width:640px;}
+
+  .grid{display:grid;gap:20px;}
+  .grid-3{grid-template-columns:repeat(3,1fr);}
+  .grid-2{grid-template-columns:repeat(2,1fr);}
+
+  .card{
+    background:#fff;
+    border:1px solid var(--line);
+    border-radius:14px;
+    padding:26px;
+    box-shadow:var(--shadow-md);
+    transition:transform .2s, box-shadow .2s;
+  }
+  .card:hover{box-shadow:var(--shadow-lg);}
+  .card h3{
+    font-family:'Cinzel',serif;
+    color:var(--burgundy);
+    font-size:19px;
+    margin:0 0 8px;
+    text-align:center;
+  }
+  .tag{
+    display:inline-flex;align-items:center;gap:6px;
+    background:var(--silk);
+    color:var(--burgundy);
+    font-size:12.5px;
+    font-weight:600;
+    padding:5px 12px;
+    border-radius:20px;
+    margin:0 auto 12px;
+  }
+  .tagrow{text-align:center;}
+  .likebar{
+    background:#F1ECE2;
+    color:var(--gray);
+    font-style:italic;
+    font-size:12.5px;
+    text-align:center;
+    padding:8px 12px;
+    border-radius:6px;
+    margin-bottom:14px;
+  }
+  .price{
+    font-family:'Cinzel',serif;
+    color:var(--burgundy);
+    font-weight:700;
+    font-size:24px;
+    text-align:center;
+    margin-bottom:16px;
+  }
+  .btn{
+    display:block;
+    width:100%;
+    background:var(--burgundy);
+    color:#fff;
+    border:none;
+    padding:13px;
+    border-radius:7px;
+    font-size:12.5px;
+    font-weight:700;
+    letter-spacing:0.6px;
+    text-transform:uppercase;
+    cursor:pointer;
+    text-align:center;
+    font-family:'Plus Jakarta Sans',sans-serif;
+    transition:background .15s, transform .1s;
+  }
+  .btn:hover{background:var(--burgundy-dark);}
+  .btn:active{transform:scale(0.99);}
+  .btn.green{background:var(--green);}
+  .btn.green:hover{background:#166b2f;}
+  .btn.ghost{background:transparent;color:var(--burgundy);border:1px solid var(--burgundy);}
+  .btn.ghost:hover{background:var(--silk);}
+  .btn.sm{padding:7px 12px;font-size:11px;width:auto;display:inline-block;}
+
+  .voucherbar{
+    background:var(--silk);
+    color:var(--burgundy);
+    font-size:12px;
+    font-weight:700;
+    padding:9px 12px;
+    border-radius:6px;
+    margin-bottom:14px;
+    border:1px dashed var(--gold);
+    text-align:center;
+  }
+
+  /* Personalize */
+  .split{display:grid;grid-template-columns:1fr 1fr;gap:28px;align-items:start;}
+  label.field-label{
+    display:block;font-size:11px;font-weight:700;letter-spacing:0.6px;
+    text-transform:uppercase;color:var(--gray);margin-bottom:8px;
+  }
+  .field{margin-bottom:20px;}
+  input[type=text], input[type=email], input[type=password], input[type=tel]{
+    width:100%;
+    padding:12px 14px;
+    border:1px solid var(--line);
+    border-radius:7px;
+    font-size:13.5px;
+    font-family:'Plus Jakarta Sans',sans-serif;
+    color:var(--ink);
+    background:#fff;
+    transition:border-color .15s;
+  }
+  input:focus{outline:2px solid var(--gold);border-color:var(--gold);}
+  .preview-wrap{
+    background:#F1ECE2;
+    border:1px solid var(--line);
+    border-radius:14px;
+    padding:28px 20px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    box-shadow:inset 0 2px 8px rgba(0,0,0,0.03);
+  }
+  .bottlecap{
+    width:38px;height:22px;background:var(--gold-foil);
+    border-radius:4px 4px 2px 2px;
+    margin:0 auto -1px;
+    box-shadow:0 2px 4px rgba(0,0,0,0.1);
+  }
+  .label{
+    width:230px;
+    border:2px solid var(--gold);
+    border-radius:8px;
+    background:var(--cream);
+    padding:28px 18px;
+    text-align:center;
+    box-shadow:0 8px 16px rgba(61,12,19,0.08);
+  }
+  .label .lv{font-family:'Cinzel',serif;font-size:9.5px;letter-spacing:2px;color:var(--gray);margin-bottom:14px;font-weight:600;}
+  .label .lt{font-family:'Cinzel',serif;font-weight:800;font-size:16px;color:var(--burgundy);margin-bottom:6px;word-break:break-word;letter-spacing:0.5px;}
+  .label .ls{font-size:9px;letter-spacing:1px;color:var(--gray);text-transform:uppercase;font-weight:600;}
+
+  /* Cart / Checkout */
+  .cartlist{display:flex;flex-direction:column;gap:14px;}
+  .cartitem{
+    display:flex;align-items:center;gap:16px;
+    background:#fff;border:1px solid var(--line);border-radius:12px;padding:18px;
+  }
+  .cicon{
+    width:42px;height:42px;border-radius:50%;border:1px solid var(--line);
+    display:flex;align-items:center;justify-content:center;flex-shrink:0;color:var(--burgundy);
+    background:var(--silk);font-size:18px;
+  }
+  .cititle{font-weight:700;font-size:14.5px;font-family:'Cinzel',serif;color:var(--burgundy);}
+  .cisub{font-size:12px;color:var(--gold);font-weight:600;margin-top:2px;}
+  .ciprice{margin-left:auto;font-family:'Cinzel',serif;font-weight:700;color:var(--burgundy);font-size:16px;flex-shrink:0;text-align:right;}
+  .qtystepper{display:flex;align-items:center;gap:10px;margin-top:8px;}
+  .qtybtn{
+    width:26px;height:26px;border-radius:50%;border:1px solid var(--line);background:#fff;
+    color:var(--burgundy);font-size:15px;font-weight:700;line-height:1;cursor:pointer;
+    display:flex;align-items:center;justify-content:center;transition:all .15s;
+  }
+  .qtybtn:hover{border-color:var(--gold);background:var(--silk);}
+  .qtyval{font-size:13px;font-weight:700;min-width:16px;text-align:center;}
+  .removebtn{
+    flex-shrink:0;width:30px;height:30px;border-radius:50%;
+    background:transparent;border:1px solid var(--line);color:var(--gray);
+    display:flex;align-items:center;justify-content:center;cursor:pointer;
+    margin-left:10px;transition:all .15s;
+  }
+  .removebtn:hover{background:var(--red-bg);border-color:var(--red-text);color:var(--red-text);}
+  .summarycard{background:#fff;border:1px solid var(--line);border-radius:12px;padding:24px;height:fit-content;}
+  .summarylabel{color:var(--gold);font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:14px;}
+  .totalrow{display:flex;justify-content:space-between;font-weight:700;font-size:16px;margin-bottom:20px;padding-bottom:16px;border-bottom:1px solid var(--line);}
+
+  .radio-row{
+    display:flex;align-items:center;gap:12px;
+    border:1px solid var(--line);border-radius:8px;
+    padding:14px 16px;margin-bottom:10px;cursor:pointer;
+    font-size:13.5px;font-weight:600;
+    transition:all .15s;
+    background:#fff;
+  }
+  .radio-row:hover{border-color:var(--gold);}
+  .radio-row.selected{border-color:var(--burgundy);background:var(--silk);}
+  .radiodot{width:18px;height:18px;border-radius:50%;border:2px solid var(--gray);flex-shrink:0;position:relative;}
+  .radio-row.selected .radiodot{border-color:var(--burgundy);}
+  .radio-row.selected .radiodot::after{
+    content:'';position:absolute;inset:3px;border-radius:50%;background:var(--burgundy);
+  }
+
+  .toast{
+    position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(20px);
+    background:var(--burgundy);color:#fff;padding:12px 24px;border-radius:30px;
+    font-size:13.5px;font-weight:600;box-shadow:var(--shadow-lg);
+    opacity:0;pointer-events:none;transition:all .25s ease;z-index:999;
+  }
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+  .guarantee-card{
+    background:#fff;border:1px solid var(--gold);border-left:4px solid var(--gold);
+    border-radius:8px;padding:16px 18px;margin-bottom:24px;
+    display:flex;gap:14px;align-items:flex-start;
+  }
+  .guarantee-card svg{flex-shrink:0;margin-top:2px;}
+  .guarantee-card div{font-size:13.5px;line-height:1.55;color:var(--ink);}
+  .tiergrid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:28px;}
+  .tiercard{
+    background:#fff;border:1px solid var(--line);border-radius:12px;
+    padding:20px;text-align:center;cursor:pointer;transition:all .2s;
+  }
+  .tiercard:hover{transform:translateY(-3px);border-color:var(--gold);}
+  .tiercard.featured{border:1.5px solid var(--gold);background:#FFFDF9;}
+  .tiername{font-weight:700;color:var(--burgundy);font-size:13.5px;margin-bottom:6px;}
+  .tierprice{font-family:'Cinzel',serif;color:var(--burgundy);font-weight:700;font-size:20px;}
+  .tiersub{font-size:11.5px;color:var(--gold);font-weight:600;margin-top:4px;}
+
+  /* Studio Sliders & Accord Pyramid */
+  .studiogrid2{display:grid;grid-template-columns:1.1fr 0.9fr;gap:24px;}
+  .slidergroup{margin-bottom:18px;}
+  .sliderlabel{display:flex;justify-content:space-between;font-size:13px;font-weight:600;margin-bottom:6px;}
+  .sliderlabel span:last-child{color:var(--burgundy);font-family:'Cinzel',serif;font-weight:700;}
+  input[type=range]{width:100%;accent-color:var(--burgundy);cursor:pointer;}
+  select.input-select{
+    width:100%;padding:12px 14px;border:1px solid var(--line);border-radius:7px;
+    font-size:13.5px;font-family:'Plus Jakarta Sans',sans-serif;background:#fff;color:var(--ink);margin-top:6px;
+  }
+  
+  .pyramid-wrap{
+    background:var(--cream);border:1px solid var(--line);border-radius:12px;padding:18px;margin-top:20px;
+  }
+  .pyramid-tier{margin-bottom:12px;}
+  .pyramid-title{font-size:11px;font-weight:700;color:var(--gold);text-transform:uppercase;letter-spacing:0.8px;display:flex;justify-content:space-between;}
+  .pyramid-bar-bg{height:10px;background:var(--silk);border-radius:5px;overflow:hidden;margin-top:4px;}
+  .pyramid-bar-fill{height:100%;background:var(--burgundy);width:0%;transition:width 0.3s ease;}
+
+  .hero{
+    display:grid;grid-template-columns:1.1fr 0.9fr;gap:36px;align-items:center;
+    margin-bottom:44px;
+  }
+  .hero h1{font-size:36px;margin-bottom:14px;line-height:1.15;}
+  .hero p.subtext{font-size:15.5px;margin-bottom:26px;}
+  .herobtns{display:flex;gap:12px;}
+  .herobtns .btn{width:auto;padding:13px 24px;}
+  .heroart{
+    border-radius:16px;overflow:hidden;
+    display:flex;align-items:center;justify-content:center;
+    box-shadow:var(--shadow-md);
+  }
+  .heroart svg{width:100%;height:auto;display:block;}
+  .moodgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-bottom:8px;}
+  .moodcard{
+    background:#fff;border:1px solid var(--line);border-radius:12px;padding:22px;
+    cursor:pointer;transition:all .2s;text-align:center;
+  }
+  .moodcard:hover{border-color:var(--gold);transform:translateY(-3px);box-shadow:var(--shadow-md);}
+  .moodcard .micon{font-size:28px;margin-bottom:8px;}
+  .moodcard b{display:block;font-size:15px;color:var(--burgundy);margin-bottom:4px;font-family:'Cinzel',serif;}
+  .moodcard span{font-size:12.5px;color:var(--gray);}
+
+  .saved-formulas{
+    margin-top:20px;background:#fff;border:1px solid var(--line);border-radius:12px;padding:20px;
+  }
+  .saved-row{display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px dashed var(--line);font-size:13px;}
+
+  /* Matcher / Quiz */
+  .quizwrap{max-width:640px;margin:0 auto;}
+  .quizprogress{display:flex;gap:6px;margin-bottom:24px;}
+  .quizprogress .seg{flex:1;height:5px;border-radius:4px;background:var(--line);transition:background .3s;}
+  .quizprogress .seg.done{background:var(--gold);}
+  .quizq{font-family:'Cinzel',serif;font-size:20px;color:var(--burgundy);margin-bottom:18px;font-weight:700;}
+  .quizopt{
+    display:block;width:100%;text-align:left;background:#fff;border:1px solid var(--line);
+    border-radius:10px;padding:16px 20px;margin-bottom:12px;font-size:14.5px;font-weight:600;
+    cursor:pointer;transition:all .15s;font-family:'Plus Jakarta Sans',sans-serif;color:var(--ink);
+  }
+  .quizopt:hover{border-color:var(--gold);background:var(--silk);transform:translateX(4px);}
+  .resultcard{
+    background:#fff;border:1px solid var(--line);border-radius:14px;padding:36px;text-align:center;
+    max-width:640px;margin:0 auto;box-shadow:var(--shadow-md);
+  }
+  .resultcard .rlabel{color:var(--gold);font-size:12px;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;}
+  .resultcard h3{font-family:'Cinzel',serif;color:var(--burgundy);font-size:28px;margin:0 0 10px;}
+  .resultcard p{color:var(--gray);font-size:14.5px;margin-bottom:24px;line-height:1.6;}
+  .resultbtns{display:flex;gap:12px;justify-content:center;}
+  .resultbtns .btn{width:auto;padding:13px 22px;}
+
+  /* Live Lab Tracker UI */
+  .tracker-step{
+    display:flex;align-items:center;gap:14px;margin-bottom:14px;font-size:13.5px;
+    padding:10px 14px;border-radius:8px;transition:background .2s;
+  }
+  .tracker-step.current{background:var(--silk);font-weight:700;color:var(--burgundy);border-left:3px solid var(--gold);}
+  .tracker-dot{width:16px;height:16px;border-radius:50%;background:var(--line);flex-shrink:0;}
+  .tracker-dot.active{background:var(--gold);box-shadow:0 0 10px var(--gold);animation:pulse 1.5s infinite;}
+  .tracker-dot.done{background:var(--green);}
+
+  .status-pill{
+    display:inline-block;padding:4px 10px;border-radius:12px;font-size:11.5px;font-weight:700;
+    text-transform:capitalize;
+  }
+  .status-pill.received{background:var(--blue-bg);color:var(--blue-text);}
+  .status-pill.formulating{background:var(--silk);color:var(--burgundy);border:1px solid var(--gold);}
+  .status-pill.bottling{background:#FFF3E0;color:#E65100;}
+  .status-pill.dispatched{background:#E1F5FE;color:#0277BD;}
+  .status-pill.delivered{background:var(--green-bg);color:var(--green-text);}
+
+  /* Filter Pills */
+  .filter-bar{display:flex;gap:8px;overflow-x:auto;margin-bottom:20px;padding-bottom:4px;}
+  .filter-pill{
+    background:#fff;border:1px solid var(--line);padding:6px 14px;border-radius:20px;
+    font-size:12.5px;font-weight:600;cursor:pointer;transition:all .15s;white-space:nowrap;
+  }
+  .filter-pill.active{background:var(--burgundy);color:#fff;border-color:var(--burgundy);}
+
+  /* Accordion & Review styles */
+  .review-bubble{
+    background:var(--cream);border:1px solid var(--line);border-radius:10px;padding:12px 16px;margin-top:10px;
+  }
+  .stars{color:var(--gold);letter-spacing:2px;font-size:13px;}
+  .perfume-meter{
+    display:flex;gap:8px;font-size:11px;color:var(--gray);margin:8px 0;background:var(--silk);padding:6px 10px;border-radius:6px;
+  }
+
+  @media (max-width: 860px){
+    .hero, .moodgrid{grid-template-columns:1fr;}
+    .split, .grid-2, .grid-3, .studiogrid2{grid-template-columns:1fr;}
+    header.nav{padding:14px 18px;}
+    main{padding:24px 18px 50px;}
+  }
+
+  @media (max-width: 640px){
+    header.nav{padding:12px 16px;gap:10px;}
+    .navwrap{flex:1 1 100%;order:3;width:100%;}
+    .tagline{display:none;}
+    .wordmark{font-size:15px;}
+    .crest{width:36px;height:36px;}
+    main{padding:20px 16px 44px;}
+  }
+
+  /* VIP Subscribe Modal */
+  .modal-overlay{
+    position:fixed;inset:0;background:rgba(42,8,13,0.72);backdrop-filter:blur(8px);
+    display:flex;align-items:center;justify-content:center;z-index:1000;
+    opacity:0;pointer-events:none;transition:opacity .25s ease;padding:20px;
+  }
+  .modal-overlay.open{opacity:1;pointer-events:auto;}
+  .modal-card{
+    background:#fff;border:2px solid var(--gold);border-radius:18px;max-width:520px;width:100%;
+    padding:36px 30px;box-shadow:0 24px 60px rgba(0,0,0,0.35);position:relative;text-align:center;
+    transform:translateY(16px);transition:transform .25s ease;
+  }
+  .modal-overlay.open .modal-card{transform:translateY(0);}
+  .modal-close{
+    position:absolute;top:16px;right:18px;background:none;border:none;font-size:24px;
+    color:var(--gray);cursor:pointer;line-height:1;transition:color .15s;
+  }
+  .modal-close:hover{color:var(--burgundy);}
+  .floating-vip-btn{
+    position:fixed;bottom:28px;right:28px;z-index:900;
+    background:var(--burgundy);color:var(--gold-light);border:2px solid var(--gold);
+    padding:10px 18px;border-radius:30px;font-size:12px;font-weight:700;letter-spacing:0.5px;
+    cursor:pointer;box-shadow:var(--shadow-lg);display:flex;align-items:center;gap:8px;
+    transition:transform .2s, background .2s;
+  }
+  .floating-vip-btn:hover{transform:translateY(-2px);background:var(--burgundy-dark);}
+</style>
+</head>
+<body>
+
+<div class="frame">
+  <div class="promo">
+    <div style="display:flex;align-items:center;gap:8px;justify-content:center;flex-wrap:wrap;">
+      <span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#3D0C13" stroke-width="2"><path d="M12 2l8 4v6c0 5-3.5 8.5-8 10-4.5-1.5-8-5-8-10V6l8-4z"/></svg> RISK-FREE GUARANTEE: Free 2ml sample included. Return unopened for a 100% refund!</span>
+      <button onclick="openSubscribeModal()" style="background:var(--burgundy);color:var(--gold-light);border:none;padding:3px 10px;border-radius:12px;font-size:11px;font-weight:700;cursor:pointer;margin-left:8px;">🎁 Get 15% Off VIP Voucher</button>
+    </div>
+  </div>
+
+  <header class="nav">
+    <div class="brandmark" onclick="go('home')">
+      <div class="crest">
+        <svg width="26" height="26" viewBox="0 0 100 100" fill="none">
+          <circle cx="50" cy="50" r="46" stroke="#C5A059" stroke-width="2.5"/>
+          <circle cx="50" cy="50" r="40" stroke="#3D0C13" stroke-width="1"/>
+          <path d="M34 34L40 41L50 29L60 41L66 34L69 46H31L34 34Z" fill="#C5A059" stroke="#3D0C13" stroke-width="0.6"/>
+          <path d="M32 50H44L50 66L56 50H68L54 74H46L32 50Z" fill="#3D0C13"/>
+        </svg>
+      </div>
+      <div>
+        <div class="wordmark">VELOUR<br>ESSENCE</div>
+        <div class="tagline">Affordable Luxury Perfumery</div>
+      </div>
+    </div>
+
+    <div class="navwrap">
+      <button class="navarrow" onclick="scrollNav(-1)">&#8249;</button>
+      <div class="navscroll" id="navscroll"></div>
+      <button class="navarrow" onclick="scrollNav(1)">&#8250;</button>
+    </div>
+
+    <div style="display:flex;align-items:center;gap:8px;">
+      <button onclick="openSubscribeModal()" class="btn sm ghost" style="margin:0;font-weight:700;border-color:var(--gold);color:var(--burgundy);display:flex;align-items:center;gap:4px;">
+        ✨ VIP Specials
+      </button>
+
+      <div class="db-indicator" id="dbIndicator" onclick="toggleDbStatusModal()">
+        <div class="db-dot"></div>
+        <span id="dbStatusText">Cloud DB Ready</span>
+      </div>
+    </div>
+  </header>
+
+  <main id="main"></main>
+</div>
+
+<!-- Floating VIP Trigger Button -->
+<button class="floating-vip-btn" onclick="openSubscribeModal()">
+  <span>✨</span> VIP Specials (15% Off)
+</button>
+
+<!-- VIP Subscribe Popup Modal -->
+<div class="modal-overlay" id="subscribeModal" onclick="if(event.target===this)closeSubscribeModal()">
+  <div class="modal-card">
+    <button class="modal-close" onclick="closeSubscribeModal()">&times;</button>
+    <div class="crest" style="margin:0 auto 12px;width:50px;height:50px;">
+      <svg width="28" height="28" viewBox="0 0 100 100" fill="none">
+        <circle cx="50" cy="50" r="46" stroke="#C5A059" stroke-width="2.5"/>
+        <circle cx="50" cy="50" r="40" stroke="#3D0C13" stroke-width="1"/>
+        <path d="M34 34L40 41L50 29L60 41L66 34L69 46H31L34 34Z" fill="#C5A059" stroke="#3D0C13" stroke-width="0.6"/>
+        <path d="M32 50H44L50 66L56 50H68L54 74H46L32 50Z" fill="#3D0C13"/>
+      </svg>
+    </div>
+    <div class="eyebrow">VIP Olfactory Privilege</div>
+    <h2 style="font-family:'Cinzel',serif;color:var(--burgundy);margin:0 0 8px;font-size:23px;">Exclusive Specials &amp; 15% Voucher</h2>
+    <p style="font-size:13px;color:var(--gray);margin:0 0 20px;line-height:1.55;">
+      Subscribe for private reserve drops, confidential batch compounding updates, and instant voucher generation delivered straight to your inbox.
+    </p>
+
+    <div style="margin-bottom:14px;">
+      <input type="email" id="vipModalEmail" placeholder="Enter your email (e.g. name@luxury.co.za)" style="text-align:center;padding:12px;font-size:14px;border:1.5px solid var(--gold);border-radius:8px;">
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:10px;">
+      <button class="btn green" onclick="handleModalSubscribe()">🎁 Claim 15% VIP Voucher</button>
+      <button class="btn ghost" onclick="simulateNewUserSubscribe()" style="font-size:11.5px;padding:10px;">🎲 Simulate New Subscriber</button>
+    </div>
+
+    <div id="modalVoucherReveal" style="display:none;margin-top:18px;background:var(--silk);border:1px dashed var(--gold);border-radius:10px;padding:14px;">
+      <div style="font-size:11px;font-weight:700;color:var(--gold);text-transform:uppercase;letter-spacing:1px;">Your VIP Voucher Code</div>
+      <div id="modalVoucherCodeText" style="font-family:'Cinzel',serif;font-size:22px;font-weight:800;color:var(--burgundy);margin:4px 0;">VELOUR-15OFF</div>
+      <div style="font-size:12px;color:var(--green-text);font-weight:700;">✅ Voucher Activated &amp; Auto-Applied to Cart!</div>
+    </div>
+  </div>
+</div>
+
+<!-- Login Required Popup Modal -->
+<div class="modal-overlay" id="loginRequiredModal" onclick="if(event.target===this)closeLoginRequiredModal()">
+  <div class="modal-card">
+    <button class="modal-close" onclick="closeLoginRequiredModal()">&times;</button>
+    <div class="crest" style="margin:0 auto 12px;width:50px;height:50px;">
+      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#3D0C13" stroke-width="1.8">
+        <path d="M12 12c2.5 0 4.5-2 4.5-4.5S14.5 3 12 3 7.5 5 7.5 7.5 9.5 12 12 12z"/>
+        <path d="M4 21c0-4 3.5-7 8-7s8 3 8 7"/>
+      </svg>
+    </div>
+    <div class="eyebrow">Account Required</div>
+    <h2 style="font-family:'Cinzel',serif;color:var(--burgundy);margin:0 0 8px;font-size:22px;">Please Create an Account</h2>
+    <p style="font-size:13px;color:var(--gray);margin:0 0 20px;line-height:1.55;">
+      Sign in or create a free Atelier account to add fragrances to your cart, track orders, and receive email confirmations.
+    </p>
+    <div style="display:flex;flex-direction:column;gap:10px;">
+      <button class="btn green" onclick="closeLoginRequiredModal();go('account');">Sign In / Create Account</button>
+      <button class="btn ghost" onclick="closeLoginRequiredModal()" style="font-size:11.5px;padding:10px;">Maybe Later</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<!-- Backend Database Bridge -->
+<script src="backend.js"></script>
+
+<script>
+/* ---------- EmailJS Configuration (Order Confirmation Emails) ---------- */
+/* Sign up free at https://www.emailjs.com, add an Email Service + Template, then
+   paste your own Public Key / Service ID / Template ID below to enable emails.
+   See the setup notes at the bottom of this reply for the exact steps. */
+const EMAILJS_PUBLIC_KEY = '6hC2Dg1jjRgQ3_4t9';
+const EMAILJS_SERVICE_ID = 'service_ih972z8';
+const EMAILJS_TEMPLATE_ID = 'template_19oc95p';
+
+if(typeof emailjs !== 'undefined' && EMAILJS_PUBLIC_KEY !== 'YOUR_EMAILJS_PUBLIC_KEY'){
+  emailjs.init({ publicKey: EMAILJS_PUBLIC_KEY });
+}
+
+/* ---------- Navigation & State ---------- */
+const NAV = [
+  {id:'home', label:'1: Home'},
+  {id:'studio', label:'2: Studio'},
+  {id:'personalize', label:'3: Personalize'},
+  {id:'matcher', label:'4: Matcher'},
+  {id:'house', label:'5: House'},
+  {id:'discovery', label:'6: Discovery'},
+  {id:'cart', label:'7: Cart', cart:true},
+  {id:'checkout', label:'8: Checkout'},
+  {id:'tracker', label:'9: Lab Tracker'},
+  {id:'account', label:'Account'}
+];
+
+let state = {
+  screen: 'home',
+  cart: [],
+  fragranceTitle: 'YOUR SIGNATURE',
+  fragranceSub: 'LIMITED EDITION • 2026',
+  payment: 'payfast',
+  studio: {top:30, heart:40, base:30, size:'50ml', price:400, preset:'Custom'},
+  savedFormulas: [],
+  quizStep: 0,
+  quizAnswers: {},
+  checkout: {userId:null, name:'', email:'', address:'', city:'Cape Town', postalCode:''},
+  activeOrderCode: null,
+  activeOrder: null,
+  houseFilter: 'all',
+  houseSearch: '',
+  voucherCode: '',
+  discountAmount: 0,
+  voucherDescription: '',
+  authMode: 'login' // 'login' | 'register'
+};
+
+const SIZE_PRICES = {'30ml':300, '50ml':400, '100ml':500};
+
+const STUDIO_PRESETS = [
+  { name: 'Velvet Oud (Woody)', top: 20, heart: 35, base: 45 },
+  { name: 'Golden Sunset (Amber)', top: 25, heart: 45, base: 30 },
+  { name: 'Capri Breeze (Fresh)', top: 50, heart: 30, base: 20 },
+  { name: 'Bourbon Vanilla (Gourmand)', top: 20, heart: 40, base: 40 }
+];
+
+const QUIZ = [
+  {
+    q:"What fragrance atmosphere speaks to you?",
+    key:'mood',
+    options:['Mysterious & Smoky Woods','Bright & Sunlit Citrus','Sensual Amber & Floral','Warm Vanilla & Spiced Tobacco'],
+  },
+  {
+    q:'When do you wear fragrance most?',
+    key:'time',
+    options:['Evening Galas & Late Nights','Daily Executive Wear','Relaxed Weekends','Special Signature Occasions'],
+  },
+  {
+    q:'Pick a reference scent you already adore:',
+    key:'ref',
+    options:['Tom Ford Oud Wood','Baccarat Rouge 540','Chanel Chance Eau Fraîche','Tom Ford Tobacco Vanille'],
+  },
+];
+
+const MATCH_RESULTS = {
+  'Tom Ford Oud Wood': {name:'Velour Noir', tag:'Late Night • Espresso', key:'noir', formula:{top:20, heart:30, base:50}, desc:'Deep roasted coffee beans interwoven with Indonesian agarwood and smoked cedar.'},
+  'Baccarat Rouge 540': {name:'Golden Aura', tag:'Sunset • Champagne', key:'aura', formula:{top:25, heart:45, base:30}, desc:'Radiant saffron blossom and Egyptian jasmine with ambergris and cashmere cedar.'},
+  'Chanel Chance Eau Fraîche': {name:'Citrus Bloom', tag:'Morning • Coastal', key:'bloom', formula:{top:50, heart:30, base:20}, desc:'Zesty Cape mandarin and water lily with sparkling Haitian vetiver.'},
+  'Tom Ford Tobacco Vanille': {name:'Havana Nights', tag:'Cuban Tobacco • Bourbon', key:'havana', formula:{top:20, heart:40, base:40}, desc:'Warm spiced ginger and Cuban tobacco leaf with luscious Madagascar vanilla beans.'}
+};
+
+function cartCount(){ return state.cart.reduce((s,i)=>s+i.qty,0); }
+function cartSubtotal(){ return state.cart.reduce((s,i)=>s+i.price*i.qty,0); }
+function cartTotal(){ return Math.max(0, cartSubtotal() - state.discountAmount); }
+
+function renderNav(){
+  const wrap = document.getElementById('navscroll');
+  if(!wrap) return;
+  wrap.innerHTML = '';
+  const user = VelourDB.getCurrentUser();
+  NAV.forEach(item=>{
+    const pill = document.createElement('button');
+    pill.className = 'pill' + (state.screen===item.id?' active':'');
+    let label = item.label;
+    if(item.id === 'account' && user){
+      label = `👤 ${user.full_name.split(' ')[0]}`;
+    }
+    let inner = label;
+    if(item.cart){
+      inner += ` <span class="badge">${cartCount()}</span>`;
+    }
+    pill.innerHTML = inner;
+    pill.onclick = ()=>go(item.id);
+    wrap.appendChild(pill);
+  });
+}
+
+function scrollNav(dir){
+  document.getElementById('navscroll').scrollBy({left: dir*220, behavior:'smooth'});
+}
+
+function toast(msg){
+  const t = document.getElementById('toast');
+  if(!t) return;
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(window._toastTimer);
+  window._toastTimer = setTimeout(()=>t.classList.remove('show'), 2200);
+}
+
+function go(id){
+  if(id === 'checkout' && !VelourDB.getCurrentUser()){
+    openLoginRequiredModal();
+    return;
+  }
+  state.screen = id;
+  renderNav();
+  renderScreen();
+  document.getElementById('main').scrollIntoView({behavior:'smooth', block:'start'});
+}
+
+function addToCart(item){
+  if(!VelourDB.getCurrentUser()){
+    openLoginRequiredModal();
+    return;
+  }
+  const existing = state.cart.find(i=>i.key===item.key && i.title===item.title && i.price===item.price);
+  if(existing){
+    existing.qty += 1;
+    toast(`Added another "${item.title}" (now ${existing.qty} in cart)`);
+  } else {
+    state.cart.push({...item, qty:1});
+    toast(`Added "${item.title}" to cart`);
+  }
+  renderNav();
+  renderScreen();
+}
+
+function removeFromCart(idx){
+  const removed = state.cart[idx];
+  state.cart.splice(idx,1);
+  if(state.cart.length === 0){
+    state.discountAmount = 0;
+    state.voucherCode = '';
+  }
+  renderNav();
+  toast(`Removed "${removed.title}" from cart`);
+  renderScreen();
+}
+
+function updateQty(idx, delta){
+  const item = state.cart[idx];
+  if(!item) return;
+  item.qty += delta;
+  if(item.qty <= 0){
+    removeFromCart(idx);
+    return;
+  }
+  renderNav();
+  renderScreen();
+}
+
+function toggleDbStatusModal() {
+  const isOnline = VelourDB.isOnline();
+  toast(isOnline ? '🟢 Connected to Atelier Cloud Services' : '🟢 Operating in Offline Atelier Mode');
+}
+
+/* ---------- Studio Liquid Preview (CSS-based) ---------- */
+function updateLiquidPreview(top, heart, base) {
+  const el = document.getElementById('studioLiquidSwatch');
+  if(!el) return;
+  const r = Math.min(255, Math.round((top*0.022 + base*0.012 + 0.3) * 255));
+  const g = Math.min(230, Math.round((heart*0.016 + top*0.008 + 0.25) * 255));
+  const b = Math.min(150, Math.round((base*0.006 + 0.08) * 255));
+  el.style.background = `linear-gradient(180deg, rgba(${r},${g},${b},0.9), rgba(${Math.round(r*0.7)},${Math.round(g*0.6)},${Math.round(b*0.5)},0.95))`;
+}
+
+/* ---------- Studio & Slider Controls ---------- */
+function updateSlider(type, val) {
+  state.studio[type] = parseInt(val);
+  const valEl = document.getElementById(`${type}Val`);
+  if(valEl) valEl.innerText = `${val}%`;
+  
+  const topBar = document.getElementById('pyramid-top');
+  const heartBar = document.getElementById('pyramid-heart');
+  const baseBar = document.getElementById('pyramid-base');
+  if(topBar) topBar.style.width = `${state.studio.top}%`;
+  if(heartBar) heartBar.style.width = `${state.studio.heart}%`;
+  if(baseBar) baseBar.style.width = `${state.studio.base}%`;
+
+  updateLiquidPreview(state.studio.top, state.studio.heart, state.studio.base);
+}
+
+function applyStudioPreset(idx) {
+  const p = STUDIO_PRESETS[idx];
+  if(!p) return;
+  state.studio.top = p.top;
+  state.studio.heart = p.heart;
+  state.studio.base = p.base;
+  state.studio.preset = p.name;
+  toast(`Applied "${p.name}" Accord formulation`);
+  renderScreen();
+}
+
+function updateSize(val) {
+  state.studio.size = val;
+  state.studio.price = SIZE_PRICES[val];
+  const sp = document.getElementById('studioPrice');
+  if(sp) sp.innerText = `R${state.studio.price}`;
+}
+
+async function saveCurrentFormula() {
+  const name = prompt('Name your bespoke formulation:', `Bespoke Blend #${state.savedFormulas.length + 1}`) || `Blend #${state.savedFormulas.length + 1}`;
+  const formulaObj = {
+    name,
+    top_pct: state.studio.top,
+    heart_pct: state.studio.heart,
+    base_pct: state.studio.base,
+    size: state.studio.size,
+    price: state.studio.price
+  };
+  
+  await VelourDB.saveFormula(formulaObj);
+  state.savedFormulas.push(formulaObj);
+  toast(`Formula "${name}" saved!`);
+  renderScreen();
+}
+
+function setPaymentMethod(method){
+  state.payment = method;
+  renderScreen();
+}
+
+/* ---------- Order Placement & Voucher Action ---------- */
+async function applyVoucher(){
+  const input = document.getElementById('voucherInput');
+  const code = input ? input.value : '';
+  if(!code){
+    toast('Please enter a voucher code');
+    return;
+  }
+  const res = await VelourDB.validateVoucher(code, cartSubtotal());
+  if(res.valid){
+    state.voucherCode = res.code;
+    state.discountAmount = res.discount;
+    state.voucherDescription = res.description;
+    toast(`Voucher Applied: -R${res.discount} (${res.description})`);
+    renderScreen();
+  } else {
+    toast(res.message);
+  }
+}
+
+/* Re-seed checkout/tracker state whenever the logged-in account changes */
+function syncStateWithUser(){
+  const user = VelourDB.getCurrentUser();
+  const uid = user ? String(user.id) : null;
+  if(state.checkout.userId === uid) return;
+  state.checkout = {
+    userId: uid,
+    name: user ? (user.full_name || '') : '',
+    email: user ? (user.email || '') : '',
+    address: '',
+    city: 'Cape Town',
+    postalCode: ''
+  };
+  state.fragranceTitle = user && user.full_name
+    ? user.full_name.split(' ')[0].toUpperCase().slice(0,14) + ' SIGNATURE'
+    : 'YOUR SIGNATURE';
+  state.activeOrderCode = null;
+  state.activeOrder = null;
+}
+
+async function placeOrder(){
+  const user = VelourDB.getCurrentUser();
+  if(!user){
+    openLoginRequiredModal();
+    return;
+  }
+
+  const name = document.getElementById('custName')?.value || user.full_name;
+  const address = document.getElementById('custAddr')?.value || state.checkout.address;
+  const city = document.getElementById('custCity')?.value || state.checkout.city;
+  const email = document.getElementById('custEmail')?.value || user.email;
+
+  if(!name || !address){
+    toast('Please enter your full name and street address');
+    return;
+  }
+
+  if(state.cart.length === 0){
+    toast('Your cart is empty');
+    return;
+  }
+
+  const orderPayload = {
+    customer_name: name,
+    customer_email: email,
+    street_address: address,
+    city: city,
+    payment_method: state.payment,
+    total_amount: cartTotal(),
+    discount_amount: state.discountAmount,
+    voucher_used: state.voucherCode,
+    items: state.cart,
+    personalization: {
+      title: state.fragranceTitle,
+      sub: state.fragranceSub
+    }
+  };
+
+  try {
+    toast('Securing your order and reserving essences...');
+    const order = await VelourDB.createOrder(orderPayload);
+    if(order){
+      state.activeOrderCode = order.order_code;
+      state.activeOrder = order;
+      state.cart = [];
+      state.discountAmount = 0;
+      state.voucherCode = '';
+      renderNav();
+      toast(`Order ${order.order_code} confirmed! Formulation has begun.`);
+      sendOrderConfirmationEmail(order);
+      go('tracker');
+    }
+  } catch(e) {
+    console.error(e);
+    toast('Unable to process order. Please try again.');
+  }
+}
+
+/* ---------- Order Confirmation Email (EmailJS — works from static hosting, e.g. GitHub Pages) ---------- */
+async function sendOrderConfirmationEmail(order){
+  const user = VelourDB.getCurrentUser();
+  if(!user || !user.email){
+    console.warn('No logged-in user email available; skipping confirmation email.');
+    return;
+  }
+
+  if(typeof emailjs === 'undefined' || EMAILJS_PUBLIC_KEY === 'YOUR_EMAILJS_PUBLIC_KEY' || EMAILJS_SERVICE_ID === 'YOUR_EMAILJS_SERVICE_ID'){
+    console.warn('EmailJS is not fully configured yet — the Service ID is still a placeholder. Find it under Email Services in your EmailJS dashboard and paste it in near the top of the script.');
+    return;
+  }
+
+  const itemsSummary = (order.items || [])
+    .map(i => `${i.title} x${i.qty} — R${(i.price * i.qty).toFixed(2)}`)
+    .join('\n');
+
+  const templateParams = {
+    to_email: user.email,
+    to_name: user.full_name || 'Valued Customer',
+    order_code: order.order_code,
+    order_total: `R${Number(order.total_amount).toFixed(2)}`,
+    order_items: itemsSummary,
+    order_status: order.status || 'received',
+    order_date: new Date(order.created_at || Date.now()).toLocaleString()
+  };
+
+  try {
+    await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, templateParams);
+    toast(`Confirmation email sent to ${user.email}`);
+  } catch(err){
+    console.error('EmailJS send error:', err);
+    toast('Order placed, but the confirmation email could not be sent.');
+  }
+}
+
+/* ---------- Submit Product Review ---------- */
+async function submitProductReview(productKey){
+  const name = document.getElementById(`revName_${productKey}`)?.value;
+  const rating = document.getElementById(`revRating_${productKey}`)?.value;
+  const comment = document.getElementById(`revComment_${productKey}`)?.value;
+
+  if(!comment){
+    toast('Please enter a review message.');
+    return;
+  }
+
+  await VelourDB.addReview({
+    product_key: productKey,
+    customer_name: name || 'Verified Perfume Connoisseur',
+    rating: parseInt(rating) || 5,
+    comment: comment
+  });
+
+  toast('Review saved! Thank you.');
+  renderScreen();
+}
+
+/* ---------- Newsletter Subscription ---------- */
+async function submitNewsletter(){
+  const input = document.getElementById('newsletterEmail');
+  if(!input || !input.value){
+    toast('Please enter a valid email.');
+    return;
+  }
+  const res = await VelourDB.subscribeNewsletter(input.value);
+  if(res && res.discount_code){
+    toast(`Welcome to the VIP Club! Voucher: ${res.discount_code}`);
+    state.voucherCode = res.discount_code;
+    input.value = '';
+  }
+}
+
+/* ---------- Screen Headers ---------- */
+function screenHeader(kicker, eyebrow, title, sub){
+  return `
+    <span class="kicker">${kicker}</span>
+    <div class="eyebrow">${eyebrow}</div>
+    <h1>${title}</h1>
+    <p class="subtext">${sub}</p>
+  `;
+}
+
+function tierCard(name, sub, price, featured=false){
+  return `
+    <div class="tiercard ${featured?'featured':''}" onclick="go('studio')">
+      <div class="tiername">${name}</div>
+      <div class="tierprice">R${price}</div>
+      <div class="tiersub">${sub}</div>
+    </div>
+  `;
+}
+
+/* ---------- Dynamic Screen Renderer ---------- */
+async function renderScreen(){
+  const main = document.getElementById('main');
+  if(!main) return;
+  syncStateWithUser();
+  let html = '';
+
+  const isOnline = VelourDB.isOnline();
+  const dbText = document.getElementById('dbStatusText');
+  if(dbText) dbText.innerText = isOnline ? 'Online Boutique' : 'Active Mode';
+
+  if(state.screen==='home'){
+    html = `
+      <span class="kicker">HAUTE PERFUMERY</span>
+      <div class="hero">
+        <div>
+          <div class="eyebrow">Welcome to Velour Essence</div>
+          <h1>Luxury fragrance, without the retail markup.</h1>
+          <p class="subtext">Master-blended perfumes formulated with imported French oils. Every full bottle includes a free 2ml sample and a risk-free 100% refund guarantee.</p>
+          <div class="herobtns">
+            <button class="btn" onclick="go('house')">Shop Collection</button>
+            <button class="btn ghost" onclick="go('matcher')">Find Scent Match</button>
+          </div>
+        </div>
+        <div class="heroart">
+          <svg viewBox="0 0 300 260" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <radialGradient id="stageGrad" cx="50%" cy="60%" r="75%">
+                <stop offset="0%" stop-color="#F4EAD8"/>
+                <stop offset="100%" stop-color="#DCCFB6"/>
+              </radialGradient>
+              <linearGradient id="liquidGrad" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#C5A059"/>
+                <stop offset="100%" stop-color="#3D0C13"/>
+              </linearGradient>
+            </defs>
+            <rect width="300" height="260" rx="16" fill="url(#stageGrad)"/>
+            <path d="M46 205Q58 150 42 118" stroke="#9C8656" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+            <circle cx="42" cy="118" r="5" fill="#C5A059"/>
+            <circle cx="52" cy="132" r="3.5" fill="#C5A059" opacity="0.7"/>
+            <ellipse cx="152" cy="216" rx="72" ry="11" fill="rgba(61,12,19,0.14)"/>
+            <rect x="112" y="90" width="80" height="120" rx="14" fill="url(#liquidGrad)" stroke="#3D0C13" stroke-width="1.5"/>
+            <rect x="124" y="100" width="9" height="100" rx="4.5" fill="rgba(255,255,255,0.22)"/>
+            <rect x="142" y="70" width="20" height="24" fill="url(#liquidGrad)" stroke="#3D0C13" stroke-width="1.2"/>
+            <rect x="134" y="52" width="36" height="22" rx="4" fill="#C5A059" stroke="#3D0C13" stroke-width="1.2"/>
+            <rect x="124" y="128" width="56" height="42" rx="3" fill="#FAF7F2" stroke="#C5A059" stroke-width="1"/>
+            <text x="152" y="146" text-anchor="middle" font-family="Cinzel, serif" font-size="6.5" fill="#3D0C13" letter-spacing="1.5">VELOUR</text>
+            <text x="152" y="157" text-anchor="middle" font-family="Cinzel, serif" font-size="6.5" fill="#3D0C13" letter-spacing="1.5">ESSENCE</text>
+          </svg>
+        </div>
+      </div>
+
+      <div class="guarantee-card">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#3D0C13" stroke-width="1.8"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+        <div>
+          <strong>Unsure how it smells online? We've got you covered:</strong><br>
+          1. Start with a Discovery Kit (R180) &amp; get 100% back as a voucher.<br>
+          2. Or order a full bottle &amp; test the included 2ml mini sample first!
+        </div>
+      </div>
+
+      <div class="eyebrow">Choose a size</div>
+      <div class="tiergrid">
+        ${tierCard('30ml','Pocket Luxury',300)}
+        ${tierCard('50ml','Flagship Bottle',400,true)}
+        ${tierCard('100ml','Statement',500)}
+      </div>
+
+      <div class="eyebrow">Shop by mood</div>
+      <h1 style="font-size:22px;margin-bottom:18px;">Where do you want to start?</h1>
+      <div class="moodgrid">
+        <div class="moodcard" onclick="go('house')">
+          <div class="micon">🌙</div>
+          <b>The House Collection</b>
+          <span>Ready-to-wear signature scents</span>
+        </div>
+        <div class="moodcard" onclick="go('studio')">
+          <div class="micon">🧪</div>
+          <b>The Studio</b>
+          <span>Blend top, heart & base oils online</span>
+        </div>
+        <div class="moodcard" onclick="go('discovery')">
+          <div class="micon">📦</div>
+          <b>Discovery Kits</b>
+          <span>Sample first, refunded as a voucher</span>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:32px;text-align:center;background:var(--silk);">
+        <div class="eyebrow">VIP Perfumery Club</div>
+        <h3 style="font-family:'Cinzel',serif;margin-bottom:8px;">Unlock 15% Off Your Next Order</h3>
+        <p style="font-size:13.5px;color:var(--gray);margin-bottom:18px;">Join our bespoke olfactory mailing list for confidential private reserve drops and voucher codes.</p>
+        <div style="display:flex;gap:8px;max-width:440px;margin:0 auto;">
+          <input type="email" id="newsletterEmail" placeholder="Enter your email" style="background:#fff;">
+          <button class="btn" style="width:auto;padding:12px 20px;" onclick="submitNewsletter()">Subscribe</button>
+        </div>
+      </div>
+      `;
+  }
+  else if(state.screen==='studio'){
+    const s = state.studio;
+    const user = VelourDB.getCurrentUser();
+    const dbFormulas = await VelourDB.getFormulas(user ? user.id : null);
+    state.savedFormulas = dbFormulas || [];
+
+    html = screenHeader('CUSTOM BUILDER', 'Interactive Formulation', 'Digital Scent Studio', 'Adjust fragrance oil ratios below and preview the blend color update live.')
+      + `<div class="studiogrid2">
+          <div class="card">
+            <div class="eyebrow" style="margin-bottom:10px;">Step 1: Choose or Mix Accords</div>
+            
+            <!-- Quick Preset Accords Selector -->
+            <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px;">
+              ${STUDIO_PRESETS.map((p, idx) => `
+                <button class="filter-pill ${s.preset===p.name?'active':''}" onclick="applyStudioPreset(${idx})">${p.name}</button>
+              `).join('')}
+            </div>
+
+            <div class="slidergroup">
+              <div class="sliderlabel"><span>Cape Citrus (Top Note)</span><span id="topVal">${s.top}%</span></div>
+              <input type="range" min="10" max="60" value="${s.top}" oninput="updateSlider('top', this.value)">
+            </div>
+            <div class="slidergroup">
+              <div class="sliderlabel"><span>Midnight Jasmine (Heart Accord)</span><span id="heartVal">${s.heart}%</span></div>
+              <input type="range" min="10" max="60" value="${s.heart}" oninput="updateSlider('heart', this.value)">
+            </div>
+            <div class="slidergroup">
+              <div class="sliderlabel"><span>Amber &amp; Smoked Cedar (Base Foundation)</span><span id="baseVal">${s.base}%</span></div>
+              <input type="range" min="10" max="60" value="${s.base}" oninput="updateSlider('base', this.value)">
+            </div>
+            
+            <div style="margin-top:20px;">
+              <label class="field-label">Step 2: Choose Flacon Size</label>
+              <select class="input-select" onchange="updateSize(this.value)">
+                <option value="30ml" ${s.size==='30ml'?'selected':''}>30ml Eau de Parfum (R300)</option>
+                <option value="50ml" ${s.size==='50ml'?'selected':''}>50ml Eau de Parfum (R400)</option>
+                <option value="100ml" ${s.size==='100ml'?'selected':''}>100ml Eau de Parfum (R500)</option>
+              </select>
+            </div>
+
+            <div class="pyramid-wrap">
+              <div class="eyebrow">Volatility Curve &amp; Olfactory Progression</div>
+              <div class="pyramid-tier">
+                <div class="pyramid-title"><span>Top Accord (0-30 mins projection)</span><span>${s.top}%</span></div>
+                <div class="pyramid-bar-bg"><div id="pyramid-top" class="pyramid-bar-fill" style="width:${s.top}%;"></div></div>
+              </div>
+              <div class="pyramid-tier">
+                <div class="pyramid-title"><span>Heart Accord (30m - 4hrs sillage)</span><span>${s.heart}%</span></div>
+                <div class="pyramid-bar-bg"><div id="pyramid-heart" class="pyramid-bar-fill" style="width:${s.heart}%;"></div></div>
+              </div>
+              <div class="pyramid-tier">
+                <div class="pyramid-title"><span>Base Foundation (4hrs - 16hrs drydown)</span><span>${s.base}%</span></div>
+                <div class="pyramid-bar-bg"><div id="pyramid-base" class="pyramid-bar-fill" style="width:${s.base}%;"></div></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card" style="text-align:center;">
+            <div class="eyebrow">Live Blend Preview</div>
+            <div class="preview-wrap" style="padding:32px 20px;">
+              <div class="bottlecap"></div>
+              <div style="width:110px;height:150px;margin:0 auto;border-radius:8px 8px 18px 18px;border:2px solid var(--gold);background:#FAF7F2;padding:6px;box-shadow:0 8px 16px rgba(61,12,19,0.08);">
+                <div id="studioLiquidSwatch" style="width:100%;height:100%;border-radius:4px 4px 14px 14px;"></div>
+              </div>
+            </div>
+            <div class="price" id="studioPrice">R${s.price}</div>
+            <div style="display:flex;gap:10px;">
+              <button class="btn ghost" onclick="saveCurrentFormula()">Save Formula</button>
+              <button class="btn" onclick="addToCart({key:'custom', title:'Custom Perfume Blend', sub:'${s.size} • Top:${s.top}% Heart:${s.heart}% Base:${s.base}%', price:${s.price}})">Add Custom Bottle to Cart</button>
+            </div>
+          </div>
+        </div>
+
+        ${state.savedFormulas.length > 0 ? `
+          <div class="saved-formulas">
+            <div class="eyebrow">Your Saved Formulations (${state.savedFormulas.length})</div>
+            ${state.savedFormulas.map(f => `
+              <div class="saved-row">
+                <div>
+                  <b style="font-family:'Cinzel',serif;font-size:14px;">${f.name} (${f.size || '50ml'})</b>
+                  <div style="font-size:12px;color:var(--gray);margin-top:2px;">Top: ${f.top_pct||f.top}% | Heart: ${f.heart_pct||f.heart}% | Base: ${f.base_pct||f.base}%</div>
+                </div>
+                <div style="display:flex;gap:8px;">
+                  <button class="btn sm ghost" onclick="state.studio.top=${f.top_pct||f.top};state.studio.heart=${f.heart_pct||f.heart};state.studio.base=${f.base_pct||f.base};state.studio.size='${f.size||'50ml'}';updateSlider('top',${f.top_pct||f.top});updateSlider('heart',${f.heart_pct||f.heart});updateSlider('base',${f.base_pct||f.base});toast('Loaded formula into blend preview');">Load</button>
+                  <button class="btn sm" onclick="addToCart({key:'custom', title:'${f.name}', sub:'${f.size||'50ml'} Custom Blend', price:${f.price}})">Order R${f.price}</button>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        ` : ''}`;
+
+    setTimeout(() => updateLiquidPreview(s.top, s.heart, s.base), 50);
+  }
+  else if(state.screen==='personalize'){
+    html = screenHeader('ENGRAVING', 'Custom Label Atelier', 'Personalize Your Bottle', 'Add custom metallic foil typography to your label and bottle face.')
+      + `<div class="split">
+          <div class="card">
+            <div class="field">
+              <label class="field-label">Fragrance Title (Bottle Face)</label>
+              <input type="text" value="${state.fragranceTitle}" maxlength="22" oninput="state.fragranceTitle=this.value.toUpperCase();document.getElementById('lblTitle').innerText=state.fragranceTitle;">
+            </div>
+            <div class="field">
+              <label class="field-label">Subtitle / Year / Dedicated To</label>
+              <input type="text" value="${state.fragranceSub}" maxlength="32" oninput="state.fragranceSub=this.value.toUpperCase();document.getElementById('lblSub').innerText=state.fragranceSub;">
+            </div>
+            <div style="display:flex;gap:10px;">
+              <button class="btn" onclick="toast('Saved Custom Engraving!')">Save Personalization</button>
+              <button class="btn ghost" onclick="addToCart({key:'custom-engraved', title:state.fragranceTitle, sub:state.fragranceSub + ' (Custom Engraved 50ml)', price:450})">Add Engraved Bottle (R450)</button>
+            </div>
+          </div>
+
+          <div class="preview-wrap">
+            <div class="bottlecap"></div>
+            <div class="label">
+              <div class="lv">VELOUR ESSENCE</div>
+              <div class="lt" id="lblTitle">${state.fragranceTitle}</div>
+              <div class="ls" id="lblSub">${state.fragranceSub}</div>
+            </div>
+          </div>
+        </div>`;
+  }
+  else if(state.screen==='matcher'){
+    const q = QUIZ[state.quizStep];
+    if(!q){
+      const ref = state.quizAnswers['ref'] || 'Tom Ford Oud Wood';
+      const res = MATCH_RESULTS[ref] || MATCH_RESULTS['Tom Ford Oud Wood'];
+      html = screenHeader('QUIZ RESULT', 'Sensory Matching Engine', 'Your Scent Match', 'Based on your olfactory profile, here is your ideal signature blend:')
+        + `<div class="resultcard">
+            <div class="rlabel">${res.tag}</div>
+            <h3>${res.name}</h3>
+            <p>${res.desc}<br><br>Formulated precisely for your preference of <strong>${state.quizAnswers['mood'] || 'luxury'}</strong>.</p>
+            <div class="resultbtns">
+              <button class="btn" onclick="addToCart({key:'${res.key}', title:'${res.name}', sub:'Matched Signature Scent', price:400})">Add to Cart (R400)</button>
+              <button class="btn ghost" onclick="state.studio.top=${res.formula.top};state.studio.heart=${res.formula.heart};state.studio.base=${res.formula.base};go('studio');">Fine-Tune in Studio</button>
+            </div>
+          </div>`;
+    } else {
+      html = screenHeader('QUIZ', 'Interactive Matcher', 'Find Your Scent', 'Answer 3 sensory questions to uncover your ideal olfactory match.')
+        + `<div class="quizwrap card">
+            <div class="quizprogress">
+              ${QUIZ.map((_,i)=>`<div class="seg ${i<=state.quizStep?'done':''}"></div>`).join('')}
+            </div>
+            <div class="quizq">${q.q}</div>
+            ${q.options.map(opt=>`
+              <button class="quizopt" onclick="state.quizAnswers['${q.key}']='${opt}';state.quizStep++;renderScreen();">${opt}</button>
+            `).join('')}
+          </div>`;
+    }
+  }
+  else if(state.screen==='house'){
+    const allProducts = await VelourDB.getProducts('house');
+    const allReviews = await VelourDB.getReviews();
+
+    let filtered = allProducts;
+    if(state.houseFilter !== 'all'){
+      filtered = filtered.filter(p => (p.accord_vibe || '').toLowerCase().includes(state.houseFilter.toLowerCase()));
+    }
+    if(state.houseSearch){
+      const query = state.houseSearch.toLowerCase();
+      filtered = filtered.filter(p => p.name.toLowerCase().includes(query) || p.like_reference.toLowerCase().includes(query) || p.top_notes.toLowerCase().includes(query));
+    }
+
+    html = screenHeader('COLLECTION', 'Curated Perfumery', 'The House Collection', 'Handcrafted, long-lasting signature fragrances masterfully blended with imported French oils.')
+      + `<div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;margin-bottom:20px;">
+          <div class="filter-bar" style="margin:0;">
+            <button class="filter-pill ${state.houseFilter==='all'?'active':''}" onclick="state.houseFilter='all';renderScreen();">All Scents</button>
+            <button class="filter-pill ${state.houseFilter==='woody'?'active':''}" onclick="state.houseFilter='woody';renderScreen();">🌲 Woody &amp; Smokey</button>
+            <button class="filter-pill ${state.houseFilter==='amber'?'active':''}" onclick="state.houseFilter='amber';renderScreen();">✨ Amber &amp; Floral</button>
+            <button class="filter-pill ${state.houseFilter==='citrus'?'active':''}" onclick="state.houseFilter='citrus';renderScreen();">🍊 Fresh Citrus</button>
+            <button class="filter-pill ${state.houseFilter==='gourmand'?'active':''}" onclick="state.houseFilter='gourmand';renderScreen();">🥃 Gourmand &amp; Spiced</button>
+          </div>
+          <div>
+            <input type="text" placeholder="🔍 Search scent or notes..." value="${state.houseSearch}" oninput="state.houseSearch=this.value;renderScreen();" style="padding:8px 14px;border-radius:20px;font-size:12.5px;max-width:240px;">
+          </div>
+        </div>
+
+        <div class="grid grid-3">
+          ${filtered.map(p => {
+            const pReviews = allReviews.filter(r => r.product_key === p.key);
+            return `
+              <div class="card">
+                <h3>${p.name}</h3>
+                <div class="tagrow"><span class="tag">${p.tag_icon||'✨'} ${p.tag}</span></div>
+                <div class="likebar">If you like: ${p.like_reference}</div>
+                
+                <div class="perfume-meter">
+                  <span>⏱️ <strong>${p.longevity || '10-12 Hrs'}</strong></span>
+                  <span>💨 <strong>${p.sillage || 'Heavy Sillage'}</strong></span>
+                </div>
+
+                <div style="font-size:12px;color:var(--gray);margin-bottom:12px;">
+                  <strong>Notes:</strong> ${p.top_notes} &bull; ${p.heart_notes} &bull; ${p.base_notes}
+                </div>
+                <div class="price">R${p.price}</div>
+                <button class="btn" onclick="addToCart({key:'${p.key}', title:'${p.name}', sub:'+ Includes Free 2ml Mini Sample', price:${p.price}})">Add to Cart</button>
+                
+                <div style="margin-top:16px;border-top:1px solid var(--line);padding-top:12px;">
+                  <div style="display:flex;justify-content:space-between;align-items:center;font-size:12px;font-weight:700;">
+                    <span>Customer Reviews (${pReviews.length})</span>
+                    <span class="stars">${'★'.repeat(Math.round(p.rating || 5))}</span>
+                  </div>
+
+                  ${pReviews.slice(0, 2).map(r => `
+                    <div class="review-bubble">
+                      <div style="font-weight:700;font-size:12px;display:flex;justify-content:space-between;">
+                        <span>${r.customer_name}</span>
+                        <span class="stars">${'★'.repeat(r.rating)}</span>
+                      </div>
+                      <div style="font-size:12px;color:var(--ink);margin-top:4px;">"${r.comment}"</div>
+                    </div>
+                  `).join('')}
+
+                  <div style="margin-top:12px;">
+                    <details style="font-size:12px;cursor:pointer;">
+                      <summary style="color:var(--burgundy);font-weight:700;">Write a Review</summary>
+                      <div style="margin-top:8px;">
+                        <input type="text" id="revName_${p.key}" placeholder="Your Name" style="margin-bottom:6px;padding:8px;font-size:12px;">
+                        <select id="revRating_${p.key}" class="input-select" style="margin-bottom:6px;padding:8px;font-size:12px;">
+                          <option value="5">⭐⭐⭐⭐⭐ (5/5 Excellence)</option>
+                          <option value="4">⭐⭐⭐⭐ (4/5 Very Good)</option>
+                          <option value="3">⭐⭐⭐ (3/5 Average)</option>
+                        </select>
+                        <input type="text" id="revComment_${p.key}" placeholder="Your experience..." style="margin-bottom:8px;padding:8px;font-size:12px;">
+                        <button class="btn sm" onclick="submitProductReview('${p.key}')">Submit Review</button>
+                      </div>
+                    </details>
+                  </div>
+                </div>
+              </div>
+            `;
+          }).join('')}
+        </div>`;
+  }
+  else if(state.screen==='discovery'){
+    const kits = await VelourDB.getProducts('discovery');
+    html = screenHeader('SAMPLES', '100% Refundable', 'Discovery Kits', 'Sample luxury scents at home. Receive the full kit cost back as a store voucher.')
+      + `<div class="grid grid-2">
+          ${kits.map(k => `
+            <div class="card">
+              <h3>${k.name}</h3>
+              <div class="price">R${k.price}</div>
+              <div class="voucherbar">${k.voucher_text || 'Includes full kit voucher inside!'}</div>
+              <div style="font-size:12.5px;color:var(--gray);margin-bottom:16px;">
+                <strong>Included Accords:</strong> ${k.top_notes} &bull; ${k.heart_notes} &bull; ${k.base_notes}
+              </div>
+              <button class="btn" onclick="addToCart({key:'${k.key}', title:'${k.name}', sub:'Includes R${k.price} Voucher', price:${k.price}})">Add Kit to Cart</button>
+            </div>
+          `).join('')}
+        </div>`;
+  }
+  else if(state.screen==='cart'){
+    html = screenHeader('CART', 'Review Items', 'Your Shopping Cart', 'All orders include free samples and risk-free returns.')
+      + (state.cart.length === 0 ? `<div class="card" style="text-align:center;padding:40px;">Your cart is empty.<br><br><button class="btn" style="width:auto;margin:0 auto;" onclick="go('house')">Browse Perfumes</button></div>` :
+        `<div class="split">
+          <div class="cartlist">
+            ${state.cart.map((item, idx) => `
+              <div class="cartitem">
+                <div class="cicon">🧪</div>
+                <div>
+                  <div class="cititle">${item.title}</div>
+                  <div class="cisub">${item.sub}</div>
+                  <div class="qtystepper">
+                    <button class="qtybtn" onclick="updateQty(${idx}, -1)">-</button>
+                    <span class="qtyval">${item.qty}</span>
+                    <button class="qtybtn" onclick="updateQty(${idx}, 1)">+</button>
+                  </div>
+                </div>
+                <div class="ciprice">
+                  R${item.price * item.qty}
+                  <button class="removebtn" onclick="removeFromCart(${idx})">&times;</button>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+          
+          <div class="summarycard">
+            <div class="summarylabel">Order Summary</div>
+            
+            <div style="display:flex;justify-content:space-between;font-size:14px;color:var(--gray);margin-bottom:8px;">
+              <span>Subtotal:</span>
+              <span>R${cartSubtotal()}</span>
+            </div>
+
+            ${state.discountAmount > 0 ? `
+              <div style="display:flex;justify-content:space-between;font-size:14px;color:var(--green-text);font-weight:700;margin-bottom:8px;">
+                <span>Discount (${state.voucherCode}):</span>
+                <span>-R${state.discountAmount}</span>
+              </div>
+            ` : ''}
+
+            <div style="display:flex;justify-content:space-between;font-size:14px;color:var(--gray);margin-bottom:14px;">
+              <span>Courier Delivery:</span>
+              <span style="color:var(--green-text);font-weight:700;">FREE</span>
+            </div>
+
+            <div class="totalrow">
+              <span>Total:</span>
+              <span>R${cartTotal()}</span>
+            </div>
+
+            <!-- Interactive Voucher Input -->
+            <div style="margin-bottom:18px;">
+              <label class="field-label">Apply Promo / Discovery Voucher</label>
+              <div style="display:flex;gap:6px;">
+                <input type="text" id="voucherInput" value="${state.voucherCode}" placeholder="e.g. VELOUR15" style="padding:8px 12px;font-size:12px;text-transform:uppercase;">
+                <button class="btn sm" onclick="applyVoucher()">Apply</button>
+              </div>
+            </div>
+
+            <button class="btn" onclick="go('checkout')">Proceed to Checkout</button>
+          </div>
+        </div>`);
+  }
+  else if(state.screen==='checkout'){
+    const user = VelourDB.getCurrentUser();
+    html = screenHeader('CHECKOUT', 'Secure Order', 'Delivery & Payment', 'Complete your details to send your order directly to our formulation lab.')
+      + `<div class="split">
+          <div class="card">
+            <div class="field">
+              <label class="field-label">Full Name</label>
+              <input type="text" id="custName" value="${state.checkout.name}" placeholder="Full name">
+            </div>
+            <div class="field">
+              <label class="field-label">Email Address (For Live Order Tracking)</label>
+              <input type="email" id="custEmail" value="${state.checkout.email || ''}" placeholder="you@example.co.za">
+            </div>
+            <div class="field">
+              <label class="field-label">Street Address</label>
+              <input type="text" id="custAddr" value="${state.checkout.address}" placeholder="Street address">
+            </div>
+            <div class="field">
+              <label class="field-label">City</label>
+              <input type="text" id="custCity" value="${state.checkout.city}">
+            </div>
+
+            <div class="field">
+              <label class="field-label">Select Payment Method</label>
+              
+              <div class="radio-row ${state.payment==='payfast'?'selected':''}" onclick="setPaymentMethod('payfast')">
+                <div class="radiodot"></div>
+                <div>
+                  <strong>PayFast / Ozow (Credit Card, Debit &amp; Instant EFT)</strong>
+                  <div style="font-size:11.5px;color:var(--gray);margin-top:2px;">Visa, Mastercard, Capitec Pay, Ozow EFT</div>
+                </div>
+              </div>
+
+              <div class="radio-row ${state.payment==='payflex'?'selected':''}" onclick="setPaymentMethod('payflex')">
+                <div class="radiodot"></div>
+                <div>
+                  <strong>PayFlex (Buy Now, Pay Later)</strong>
+                  <div style="font-size:11.5px;color:var(--gray);margin-top:2px;">4 equal interest-free installments of R${Math.round(cartTotal()/4 || 0)}</div>
+                </div>
+              </div>
+
+              <div class="radio-row ${state.payment==='applepay'?'selected':''}" onclick="setPaymentMethod('applepay')">
+                <div class="radiodot"></div>
+                <div>
+                  <strong>Apple Pay / Google Pay</strong>
+                  <div style="font-size:11.5px;color:var(--gray);margin-top:2px;">Instant 1-tap express checkout</div>
+                </div>
+              </div>
+            </div>
+
+           <button class="btn green" onclick="placeOrder()">Confirm &amp; Place Order (R${cartTotal()})</button>
+          </div>
+
+          <div class="card">
+            <div class="eyebrow">Real-Time Cloud Synchronization</div>
+            <h3 style="text-align:left;font-size:16px;">What Happens Next?</h3>
+            <p style="font-size:13px;color:var(--gray);line-height:1.6;">
+              When you click "Confirm &amp; Place Order", your unique tracking manifest is generated and transmitted directly to our Master Perfumer formulation queue.
+            </p>
+            <div class="guarantee-card" style="margin-top:14px;">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#3D0C13" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+              <div style="font-size:12.5px;">
+                <strong>Live Order Tracking:</strong> You can watch formulation progress in real-time under the <strong>Lab Tracker</strong> tab.
+              </div>
+            </div>
+            <div class="guarantee-card" style="margin-top:10px;">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#3D0C13" stroke-width="2"><path d="M4 4h16v16H4z"/><path d="M4 4l8 8 8-8"/></svg>
+              <div style="font-size:12.5px;">
+                <strong>Confirmation Email:</strong> A receipt will be sent to <strong>${user ? user.email : 'your account email'}</strong> once your order is confirmed.
+              </div>
+            </div>
+          </div>
+        </div>`;
+  }
+  else if(state.screen==='tracker'){
+    const trackUser = VelourDB.getCurrentUser();
+    const orders = trackUser ? await VelourDB.getOrders(trackUser.role === 'admin' ? null : trackUser.id) : [];
+    const active = orders.find(o => o.order_code === state.activeOrderCode) || orders[0];
+    const status = active ? active.status : 'received';
+
+    html = screenHeader('LAB TRACKER', 'Real-Time Telemetry', `Order Tracker: ${active ? active.order_code : 'No Active Order'}`, 'Monitor master perfumer blending, maturation, bottling, and courier dispatch in real-time.')
+      + `<div class="split">
+          <div class="card">
+            <div class="eyebrow">Formulation Pipeline Status</div>
+            <div style="margin-top:20px;">
+              <div class="tracker-step ${['received','formulating','bottling','dispatched','delivered'].includes(status)?'done':''} ${status==='received'?'current':''}">
+                <div class="tracker-dot ${status==='received'?'active':'done'}"></div>
+                <div>
+                  <strong>1. Order Confirmed &amp; Formulation Queued</strong>
+                  <div style="font-size:11.5px;color:var(--gray);">Raw essence inventory reserved</div>
+                </div>
+              </div>
+
+              <div class="tracker-step ${['formulating','bottling','dispatched','delivered'].includes(status)?'done':''} ${status==='formulating'?'current':''}">
+                <div class="tracker-dot ${status==='formulating'?'active':(['bottling','dispatched','delivered'].includes(status)?'done':'')}"></div>
+                <div>
+                  <strong>2. Formulating Master Oils in Lab</strong>
+                  <div style="font-size:11.5px;color:var(--gray);">Precision dropper ratio mixing</div>
+                </div>
+              </div>
+
+              <div class="tracker-step ${['bottling','dispatched','delivered'].includes(status)?'done':''} ${status==='bottling'?'current':''}">
+                <div class="tracker-dot ${status==='bottling'?'active':(['dispatched','delivered'].includes(status)?'done':'')}"></div>
+                <div>
+                  <strong>3. Bottling &amp; Custom Label Engraving</strong>
+                  <div style="font-size:11.5px;color:var(--gray);">Sealing French crimp atomizers</div>
+                </div>
+              </div>
+
+              <div class="tracker-step ${['dispatched','delivered'].includes(status)?'done':''} ${status==='dispatched'?'current':''}">
+                <div class="tracker-dot ${status==='dispatched'?'active':(status==='delivered'?'done':'')}"></div>
+                <div>
+                  <strong>4. Dispatched via Express Courier</strong>
+                  <div style="font-size:11.5px;color:var(--gray);">Door-to-door overnight express delivery</div>
+                </div>
+              </div>
+
+              <div class="tracker-step ${status==='delivered'?'done current':''}">
+                <div class="tracker-dot ${status==='delivered'?'done':''}"></div>
+                <div>
+                  <strong>5. Delivered &amp; Ready to Wear</strong>
+                  <div style="font-size:11.5px;color:var(--gray);">Don't forget to test the 2ml sample vial first</div>
+                </div>
+              </div>
+            </div>
+
+            <div style="margin-top:24px;border-top:1px solid var(--line);padding-top:16px;">
+              <div class="eyebrow">Switch Order Code</div>
+              <div style="display:flex;gap:8px;margin-top:6px;">
+                <select class="input-select" onchange="state.activeOrderCode=this.value;renderScreen();" style="margin:0;">
+                  ${orders.map(o => `<option value="${o.order_code}" ${o.order_code===(active?active.order_code:'')?'selected':''}>${o.order_code} — ${o.customer_name} (R${o.total_amount})</option>`).join('')}
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="eyebrow">Order Manifest</div>
+            ${active ? `
+              <h3 style="text-align:left;margin-top:8px;">${active.order_code}</h3>
+              <div style="font-size:13px;color:var(--gray);margin-bottom:14px;">
+                Customer: <strong>${active.customer_name}</strong><br>
+                Destination: ${active.street_address}, ${active.city}<br>
+                Payment: <span style="text-transform:uppercase;">${active.payment_method}</span><br>
+                Placed: ${new Date(active.created_at).toLocaleString()}
+              </div>
+
+              <div class="eyebrow" style="margin-top:16px;">Items in Batch</div>
+              <div class="cartlist" style="margin-top:8px;">
+                ${(active.items || []).map(i => `
+                  <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px dashed var(--line);font-size:13px;">
+                    <div><strong>${i.title}</strong> (${i.qty}x)<br><span style="font-size:11.5px;color:var(--gold);">${i.sub}</span></div>
+                    <div style="font-family:'Cinzel',serif;font-weight:700;">R${i.price * i.qty}</div>
+                  </div>
+                `).join('')}
+              </div>
+
+              <div class="totalrow" style="margin-top:16px;">
+                <span>Total Amount:</span>
+                <span>R${active.total_amount}</span>
+              </div>
+            ` : `<p>No active orders found.</p>`}
+          </div>
+        </div>`;
+  }
+  else if(state.screen==='account'){
+    const user = VelourDB.getCurrentUser();
+    if(!user){
+      html = screenHeader('ACCOUNT', 'Atelier Membership', 'Client Authentication', 'Access your bespoke fragrance archives, saved formulations, and order history.')
+        + `<div class="card" style="max-width:480px;margin:0 auto;">
+            <div style="display:flex;gap:10px;margin-bottom:20px;border-bottom:1px solid var(--line);padding-bottom:12px;">
+              <button class="btn ${state.authMode==='login'?'':'ghost'}" style="flex:1;" onclick="state.authMode='login';renderScreen();">Sign In</button>
+              <button class="btn ${state.authMode==='register'?'':'ghost'}" style="flex:1;" onclick="state.authMode='register';renderScreen();">Register</button>
+            </div>
+
+            ${state.authMode==='login' ? `
+              <div class="field">
+                <label class="field-label">Email Address</label>
+                <input type="email" id="loginEmail" value="anas@example.co.za">
+              </div>
+              <div class="field">
+                <label class="field-label">Password</label>
+                <input type="password" id="loginPwd" value="velour2026">
+              </div>
+              <button class="btn" onclick="handleLogin()">Sign In to Atelier</button>
+
+              <div style="margin-top:18px;border-top:1px dashed var(--line);padding-top:12px;font-size:12px;text-align:center;color:var(--gray);">
+                <strong>Fast Demo Account:</strong><br>
+                <a href="javascript:void(0)" onclick="document.getElementById('loginEmail').value='anas@example.co.za';document.getElementById('loginPwd').value='velour2026';" style="color:var(--burgundy);">Anas Smith (Customer)</a>
+              </div>
+            ` : `
+              <div class="field">
+                <label class="field-label">Full Name</label>
+                <input type="text" id="regName" placeholder="Tariq Mansoor">
+              </div>
+              <div class="field">
+                <label class="field-label">Email Address</label>
+                <input type="email" id="regEmail" placeholder="tariq@example.co.za">
+              </div>
+              <div class="field">
+                <label class="field-label">Phone Number</label>
+                <input type="tel" id="regPhone" placeholder="+27 82 000 0000">
+              </div>
+              <div class="field">
+                <label class="field-label">Password</label>
+                <input type="password" id="regPwd" placeholder="••••••••">
+              </div>
+              <button class="btn green" onclick="handleRegister()">Create Atelier Account</button>
+            `}
+          </div>`;
+    } else {
+      const userOrders = await VelourDB.getOrders(user.id);
+      const userFormulas = await VelourDB.getFormulas(user.id);
+
+      html = screenHeader('ACCOUNT', 'Client Profile', `Welcome, ${user.full_name}`, `Registered email: ${user.email} &bull; Role: <strong style="text-transform:uppercase;">${user.role}</strong>`)
+        + `<div class="split">
+            <div class="card">
+              <div class="eyebrow">Your Past Orders (${userOrders.length})</div>
+              ${userOrders.length === 0 ? `<p style="font-size:13px;color:var(--gray);margin-top:12px;">No orders found yet.</p>` : `
+                <div class="cartlist" style="margin-top:12px;">
+                  ${userOrders.map(o => `
+                    <div style="background:var(--cream);border:1px solid var(--line);border-radius:10px;padding:14px;">
+                      <div style="display:flex;justify-content:space-between;align-items:center;">
+                        <strong>${o.order_code}</strong>
+                        <span class="status-pill ${o.status}">${o.status}</span>
+                      </div>
+                      <div style="font-size:12px;color:var(--gray);margin-top:4px;">
+                        ${new Date(o.created_at).toLocaleDateString()} &bull; Total: <strong>R${o.total_amount}</strong>
+                      </div>
+                      <button class="btn sm ghost" style="margin-top:8px;" onclick="state.activeOrderCode='${o.order_code}';go('tracker');">Track Status</button>
+                    </div>
+                  `).join('')}
+                </div>
+              `}
+              
+              <div style="margin-top:24px;">
+                <button class="btn ghost" onclick="VelourDB.logout();toast('Logged out');renderScreen();">Sign Out</button>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="eyebrow">Saved Custom Formulations (${userFormulas.length})</div>
+              ${userFormulas.length === 0 ? `<p style="font-size:13px;color:var(--gray);margin-top:12px;">You haven't saved any custom formulations yet. Design one in The Studio!</p><button class="btn sm" onclick="go('studio')">Open Studio</button>` : `
+                <div class="cartlist" style="margin-top:12px;">
+                  ${userFormulas.map(f => `
+                    <div style="background:var(--cream);border:1px solid var(--line);border-radius:10px;padding:14px;">
+                      <strong>${f.name}</strong> (${f.size || '50ml'})
+                      <div style="font-size:12px;color:var(--gray);margin-top:4px;">
+                        Top: ${f.top_pct}% | Heart: ${f.heart_pct}% | Base: ${f.base_pct}%
+                      </div>
+                      <button class="btn sm" style="margin-top:8px;" onclick="addToCart({key:'custom', title:'${f.name}', sub:'Top:${f.top_pct}% Heart:${f.heart_pct}% Base:${f.base_pct}%', price:${f.price}})">Order Bottle (R${f.price})</button>
+                    </div>
+                  `).join('')}
+                </div>
+              `}
+            </div>
+          </div>`;
+    }
+  }
+
+  main.innerHTML = html;
+  main.classList.remove('anim');
+  void main.offsetWidth;
+  main.classList.add('anim');
+}
+
+/* ---------- VIP Modal & New User Simulation ---------- */
+function openSubscribeModal(){
+  const m = document.getElementById('subscribeModal');
+  if(m) {
+    m.classList.add('open');
+    const r = document.getElementById('modalVoucherReveal');
+    if(r) r.style.display = 'none';
+  }
+}
+
+function closeSubscribeModal(){
+  const m = document.getElementById('subscribeModal');
+  if(m) m.classList.remove('open');
+}
+
+/* ---------- Login Required Modal (gates cart/checkout for guests) ---------- */
+function openLoginRequiredModal(){
+  const m = document.getElementById('loginRequiredModal');
+  if(m) m.classList.add('open');
+}
+
+function closeLoginRequiredModal(){
+  const m = document.getElementById('loginRequiredModal');
+  if(m) m.classList.remove('open');
+}
+
+async function handleModalSubscribe(){
+  const input = document.getElementById('vipModalEmail');
+  const email = input ? input.value.trim() : '';
+  if(!email || !email.includes('@')){
+    toast('Please enter a valid email address.');
+    return;
+  }
+  toast('Activating your VIP subscription...');
+  const res = await VelourDB.subscribeNewsletter(email);
+  if(res && res.discount_code){
+    state.voucherCode = res.discount_code;
+    state.discountAmount = Math.round(cartSubtotal() * 0.15) || 60;
+    const reveal = document.getElementById('modalVoucherReveal');
+    const codeEl = document.getElementById('modalVoucherCodeText');
+    if(reveal && codeEl){
+      codeEl.innerText = res.discount_code;
+      reveal.style.display = 'block';
+    }
+    toast(`Welcome to the VIP Club! Your 15% voucher ${res.discount_code} is active.`);
+    renderNav();
+    if(state.screen === 'cart') renderScreen();
+  }
+}
+
+const SAMPLE_VIP_DOMAINS = ['luxury.co.za', 'hauteparfum.com', 'sandtonexec.co.za', 'nichescent.org', 'stellenbosch.co.za', 'capetownluxury.co.za', 'dubaiparfum.ae'];
+const SAMPLE_VIP_NAMES = ['isabella.leroux', 'marcus.vanderbilt', 'elena.rostova', 'tariq.al-mansoor', 'claire.duplessis', 'sebastian.cross', 'camilla.couture', 'alexander.wright'];
+
+async function simulateNewUserSubscribe(){
+  const randName = SAMPLE_VIP_NAMES[Math.floor(Math.random() * SAMPLE_VIP_NAMES.length)];
+  const randNum = Math.floor(100 + Math.random() * 900);
+  const randDomain = SAMPLE_VIP_DOMAINS[Math.floor(Math.random() * SAMPLE_VIP_DOMAINS.length)];
+  const simulatedEmail = `${randName}${randNum}@${randDomain}`;
+
+  const emailInput = document.getElementById('vipModalEmail');
+  if(emailInput) emailInput.value = simulatedEmail;
+
+  toast(`Activating VIP pass for ${simulatedEmail}...`);
+  const res = await VelourDB.subscribeNewsletter(simulatedEmail);
+
+  if(res && res.discount_code){
+    state.voucherCode = res.discount_code;
+    state.discountAmount = Math.round(cartSubtotal() * 0.15) || 60;
+    const reveal = document.getElementById('modalVoucherReveal');
+    const codeEl = document.getElementById('modalVoucherCodeText');
+    if(reveal && codeEl){
+      codeEl.innerText = res.discount_code;
+      reveal.style.display = 'block';
+    }
+    toast(`VIP pass activated for ${simulatedEmail}! Code: ${res.discount_code}`);
+    renderNav();
+    if(state.screen === 'cart') renderScreen();
+  }
+}
+
+/* ---------- Auth Handlers ---------- */
+async function handleLogin(){
+  const email = document.getElementById('loginEmail')?.value;
+  const pwd = document.getElementById('loginPwd')?.value;
+  if(!email || !pwd){
+    toast('Please provide email and password.');
+    return;
+  }
+  const res = await VelourDB.login(email, pwd);
+  if(res.success){
+    toast(`Welcome back, ${res.user.full_name}!`);
+    renderNav();
+    renderScreen();
+  } else {
+    toast(res.error || 'Login failed.');
+  }
+}
+
+async function handleRegister(){
+  const name = document.getElementById('regName')?.value;
+  const email = document.getElementById('regEmail')?.value;
+  const phone = document.getElementById('regPhone')?.value;
+  const pwd = document.getElementById('regPwd')?.value;
+
+  if(!name || !email || !pwd){
+    toast('Please fill all required fields.');
+    return;
+  }
+  const res = await VelourDB.register(email, pwd, name, phone);
+  if(res.success){
+    toast(`Account created for ${res.user.full_name}!`);
+    renderNav();
+    renderScreen();
+  } else {
+    toast(res.error || 'Registration failed.');
+  }
+}
+
+/* ---------- Real-Time WebSocket Listener Hook ---------- */
+VelourDB.onOrderChange((payload) => {
+  console.log('⚡ Real-time Order payload received:', payload);
+  toast('⚡ Order status updated in real time!');
+  renderNav();
+  renderScreen();
+});
+
+VelourDB.onReviewChange((payload) => {
+  console.log('⚡ Real-time Review payload received:', payload);
+  toast('⚡ New Customer Review Published!');
+  renderScreen();
+});
+
+/* ---------- Initial Kickoff ---------- */
+window.onDatabaseReady = function() {
+  renderNav();
+  renderScreen();
+};
+
+renderNav();
+renderScreen();
+
+</script>
+</body>
+</html>
