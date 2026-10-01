@@ -22,7 +22,6 @@ Every feature below carries a status so you can see at a glance what really work
 | Area | Feature | Status |
 |---|---|---|
 | Chrome | Promo bar, header nav, cart badge, mobile menu, footer, toasts | ✅ |
-| Chrome | Cookie-consent banner (required before sign-in/register) | ✅ |
 | Chrome | Accessibility button (next to cart) with colour-vision + text-size slider | ✅ |
 | Home | Hero carousel, tier cards, mood grid, guarantee callout | ✅ |
 | Home | **About Us** section with one dropdown per company page | ✅ |
