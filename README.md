@@ -1,4 +1,4 @@
-# Velour Essence — Full Site Documentation
+# Velour Essence - Full Site Documentation
 
 A complete reference to every feature, screen, and system in the Velour Essence site. It covers `index.html` (the entire front-end app) and `backend.js` (the data layer), plus the Supabase SQL files that back them.
 
@@ -80,7 +80,7 @@ Velour Essence is a single-page fragrance e-commerce site built as **one self-co
 
 **No React, no bundler, no npm build.** `index.html` loads three scripts via `<script src>` tags (Supabase JS SDK and EmailJS SDK from a CDN, and the local `backend.js`), then one large inline `<script>` block containing all app logic. `index.html` is about 3,750 lines; `backend.js` is about 770.
 
-> There is **no text-to-speech / speech-synthesis feature**. It was removed from the site entirely.
+> There is **no text-to-speech**. It was removed from the site entirely.
 
 ### Dual-database design (the key architectural idea)
 
@@ -313,7 +313,7 @@ Ten content pages rendered with a consistent header/eyebrow/title pattern. The f
 
 ---
 
-## 16. Data model — what's actually stored
+## 16. Data model - what's actually stored
 
 ### Supabase tables (primary, when reachable)
 | Table | Purpose |
@@ -340,7 +340,7 @@ Every interaction mutates `state` directly, then calls `renderScreen()` and/or `
 
 ---
 
-## 18. Known limitations (read before relying on this in production)
+## 18. Known limitations
 
 - **Payment methods are cosmetic** — nothing integrates with a real gateway; "placing an order" just records it.
 - **OTP is a demo** — the code is fixed at `0000`, is shown on screen if the email can't be sent, and does not prove ownership of the email address (Section 10.1).
@@ -362,8 +362,6 @@ Every interaction mutates `state` directly, then calls `renderScreen()` and/or `
 |---|---|
 | `index.html` | The entire application — markup, CSS, and all client-side JS |
 | `backend.js` | The `VelourDB` data-access layer (Supabase + IndexedDB dual-mode) |
-| `supabase_returns_table.sql` | Creates the `returns` table, RLS policy, and order-status sync trigger |
-| `supabase_add_house_products.sql` | Inserts the 4 newest House Collection products + starter reviews |
 | `README.md` | This document |
 
 Everything is designed to be opened as a static file or deployed to any static host (GitHub Pages, Netlify, S3, etc.) with no server-side code required.
