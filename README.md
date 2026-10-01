@@ -1,6 +1,6 @@
 # Velour Essence - Full Site Documentation
 
-A complete reference to every feature, screen, and system in the Velour Essence site. It covers `index.html` (the entire front-end app) and `backend.js` (the data layer), plus the Supabase SQL files that back them.
+A complete reference to every feature, screen, and system in the Velour Essence site. It covers `index.html` (the entire front-end app) and `backend.js` (the data layer)
 
 Group Members:  
 | Zia Modarrisi - 230671942 |  
