@@ -343,7 +343,7 @@ Every interaction mutates `state` directly, then calls `renderScreen()` and/or `
 ## 18. Known limitations
 
 - **Payment methods are cosmetic** — nothing integrates with a real gateway; "placing an order" just records it.
-- **OTP is a demo** — the code is fixed at `0000`, is shown on screen if the email can't be sent, and does not prove ownership of the email address (Section 10.1).
+- **OTP is a demo** — the code is fixed at `0000`, and does not prove ownership of the email address (Section 10.1).
 - **Passwords are stored in plain text**, and the seed admin login (`admin@velouressence.co.za` / `admin123`) is public in the code.
 - **Voucher validation is loose** — any `VELOUR-…OFF` code is accepted as a flat discount, and an applied discount does not recalculate when cart quantities change (Section 8).
 - **Courier tracking is simulated** — the status auto-advance and the map location are client-side stand-ins, not a real courier or GPS.
